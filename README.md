@@ -14,11 +14,13 @@ relatórios personalizados sobre o consumo e as avaliações do catálogo.</p>
 ## Estrutura planejada de classes
 
 Classe: Usuário
+
 Atributos:
   - Login
   - Senha
 
 Classe: Mídia
+
 Atributos: 
   - Título
   - Tipo
@@ -29,6 +31,7 @@ Atributos:
   - Status
 
 Classe: Filme (herda de Mídia)
+
 Atributos:
   - Duração
 
