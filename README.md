@@ -1,6 +1,6 @@
 # Tema-10-Catalogo-de-Filmes
 
-##Descrição do projeto e objetivo
+## Descrição do projeto e objetivo
 
 <p>TotalView é um sistema em linha de comando (CLI) para gerenciar um catálogo pessoal de 
 filmes e séries, com avaliações, status de visualização, temporadas/episódios, histórico e 
@@ -11,5 +11,5 @@ comparar avaliações entre mídias.</>p
 filmes e séries, organizar listas e favoritos, registrar o histórico de visualização e gerar 
 relatórios personalizados sobre o consumo e as avaliações do catálogo.</p>
 
-##Estrutura planejada de classes
+## Estrutura planejada de classes
 
