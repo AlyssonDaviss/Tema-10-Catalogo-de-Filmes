@@ -65,12 +65,12 @@ Classe: Avaliação (se relaciona com Usuário e Mídia)
 
 ### Obs. 
 
-    * Dividi Série, Temporada e Episódio, pois cada um possui características próprias que são melhores representadas separadamente.
+     Dividi Série, Temporada e Episódio, pois cada um possui características próprias que são melhores representadas separadamente.
     
-    * Duração não participa de Mídia, pois não é compatível com a estrutura de série (temporadas e episódios), e sim com episódios e filmes.
+     Duração não participa de Mídia, pois não é compatível com a estrutura de série (temporadas e episódios), e sim com episódios e filmes.
       - Da mesma forma, subdividi os atributos de Série entre Episódio e Temporada, pois não é usual saber a duração de uma série inteira
       assim como outros atributos.
 
-    * A nota média da série e a nota geral do catálogo são calculadas automaticamente a partir das avaliações registradas.
+     A nota média da série e a nota geral do catálogo são calculadas automaticamente a partir das avaliações registradas.
 
 
