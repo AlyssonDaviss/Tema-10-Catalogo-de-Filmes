@@ -14,7 +14,7 @@ relatórios personalizados sobre o consumo e as avaliações do catálogo.</p>
 ## Estrutura planejada de classes
 
 <details>
-<summary>Clique para expandir</summary>
+<summary>UML Textual Simplificado</summary>
 
 Classe: Usuário
 
