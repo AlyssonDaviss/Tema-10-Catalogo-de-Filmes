@@ -165,6 +165,150 @@ Métodos:
 
 </details>
 
+<details>
+<summary>Ver a estrutura</summary>
+
+classDiagram
+
+    class Usuario {
+        -String login
+        -String senha
+        +fazerLogin()
+    }
+
+    class CLI {
+        -String comando
+        -String argumentos
+        +executar()
+        +processarComando()
+        +mostrarAjuda()
+    }
+
+    class Comandos {
+        +cadastrar()
+        +listar()
+        +buscar()
+        +avaliar()
+        +remover()
+        +criarLista()
+        +gerarRelatorio()
+        +mostrarConfig()
+    }
+
+    class Midia {
+        -String titulo
+        -String tipo
+        -String genero
+        -int ano
+        -String classificacaoIndicativa
+        -String[] elenco
+        -String status
+        +cadastrarMidia()
+        +impedirDuplicidade()
+        +registrarStatus()
+    }
+
+    class Filme {
+        -int duracao
+        +registrarDuracao()
+    }
+
+    class Serie {
+        -int numeroTemporadas
+        -int numeroEpisodios
+        -float nota
+        +registrarTemporadas()
+        +atualizarStatus()
+    }
+
+    class Temporada {
+        -String titulo
+        -int numeroEpisodios
+        -Date dataLancamento
+        -float nota
+        +registrarEpisodios()
+    }
+
+    class Episodio {
+        -int numeroEpisodio
+        -String titulo
+        -int duracao
+        -Date dataLancamento
+        -String statusVisualizacao
+        -float nota
+        +registrarStatus()
+    }
+
+    class Avaliacao {
+        -float nota
+        -String comentario
+        +gerarMedia()
+        +registrarNota()
+        +registrarComentario()
+    }
+
+    class HistoricoVisualizacao {
+        -Midia midia
+        -Date data
+        -Time hora
+        +salvarHistorico()
+        +registrarDataHora()
+    }
+
+    class Lista {
+        -String nome
+        -String tipo
+        -Midia[] conteudo
+        +criarLista()
+        +adicionarNaLista()
+        +removerNaLista()
+        +apagarLista()
+    }
+
+    class Relatorio {
+        +gerarMediaGeralCatalogo()
+        +gerarRelatorio()
+        +mediaGenero()
+        +tempoTotalTipo()
+        +top10()
+        +serieMaiorNumeroEpAssistidos()
+    }
+
+    class Configuracoes {
+        -float notaMinimaRecomendacao
+        -int limiteListasPersonalizadas
+        +mostrarConfig()
+        +notaMinRecomendado()
+        +limiteLista()
+    }
+
+    %% Herança
+    Midia <|-- Filme : Herda de
+    Midia <|-- Serie : Herda de
+
+    %% Relações
+    Serie "1" --> "*" Temporada : Possui
+    Temporada "1" --> "*" Episodio : Possui
+
+    Usuario "1" --> "*" Avaliacao : Realiza
+    Midia "1" --> "*" Avaliacao : Recebe
+    Episodio "1" --> "*" Avaliacao : Recebe
+
+    Usuario "1" --> "*" HistoricoVisualizacao : Possui
+    Midia "1" --> "*" HistoricoVisualizacao : Registrada
+
+    Usuario "1" --> "*" Lista : Possui
+    Lista "*" --> "*" Midia : Contem
+
+    CLI --> Comandos : Executa
+    Comandos --> Midia : Gerencia
+    Comandos --> Avaliacao : Gerencia
+    Comandos --> Lista : Gerencia
+    Comandos --> Relatorio : Gera
+    Comandos --> Configuracoes : Consulta
+
+</details>
+
 ### Decisões de Desing. 
 
     - Dividi Série, Temporada e Episódio, pois cada um possui características próprias que são melhores representadas separadamente.
