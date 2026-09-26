@@ -168,6 +168,7 @@ Métodos:
 <details>
 <summary>Ver a estrutura</summary>
 
+```mermaid
 classDiagram
 
     class Usuario {
@@ -306,6 +307,7 @@ classDiagram
     Comandos --> Lista : Gerencia
     Comandos --> Relatorio : Gera
     Comandos --> Configuracoes : Consulta
+```
 
 </details>
 
