@@ -21,16 +21,14 @@ Atributos:
 
 Classe: Mídia
 
-Classe: Mídia
-
 Atributos:
-- Título
-- Tipo
-- Gênero
-- Ano
-- Classificação_Indicativa
-- Elenco
-- Status
+  - Título
+  - Tipo
+  - Gênero
+  - Ano
+  - Classificação_Indicativa
+  - Elenco
+  - Status
 
 Classe: Filme (herda de Mídia)
 
@@ -38,18 +36,24 @@ Atributos:
   - Duração
 
 Classe: Série (herda de Mídia)
+
+Atributos:
   - nº Temporadas
   - nº Episódios
   - Data de lançamento
   - Nota (opcional)
 
 Classe: Temporada (Se relaciona com Série e Episódio)
+
+Atributos:
   - Titulo
   - nº Episódios
   - Data de lançamento
   - Nota (opcional)
 
 Classe: Episódio (Se relaciona com Temporada)
+
+Atributos:
   - nº Episódio
   - Título
   - Duração
@@ -59,18 +63,42 @@ Classe: Episódio (Se relaciona com Temporada)
 
 Classe: Avaliação (se relaciona com Usuário e Mídia)
 
+Atributos:
   - Nota
   - Comentário
 
+Classe: Histórico de visualização (se relaciona com Usuário e Mídia)
 
-### Obs. 
+Atributos:
+  - Data
+  - Hora
 
-     Dividi Série, Temporada e Episódio, pois cada um possui características próprias que são melhores representadas separadamente.
+Classe: Lista (se relaciona com Usuário e Mídia)
+
+Atributos:
+  - Nome
+  - Tipo
+  - Conteúdo []
+
+Classe: Relatório
+
+Classe: Configurações
+
+Atributos:
+  - Nota Mínima para a Recomendação
+  - Limite de listas personalizadas por usuário
+
+
+### Decisões de Desing. 
+
+    - Dividi Série, Temporada e Episódio, pois cada um possui características próprias que são melhores representadas separadamente.
     
-     Duração não participa de Mídia, pois não é compatível com a estrutura de série (temporadas e episódios), e sim com episódios e filmes.
+    - Duração não participa de Mídia, pois não é compatível com a estrutura de série (temporadas e episódios), e sim com episódios e filmes.
       - Da mesma forma, subdividi os atributos de Série entre Episódio e Temporada, pois não é usual saber a duração de uma série inteira
       assim como outros atributos.
 
-     A nota média da série e a nota geral do catálogo são calculadas automaticamente a partir das avaliações registradas.
+    - A nota média da série e a nota geral do catálogo são calculadas automaticamente a partir das avaliações registradas.
+
+    - Como Favoritos é um tipo de lista, não vejo motivo para criá-la como uma subclasse, então coloquei como um tipo.
 
 
