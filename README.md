@@ -19,6 +19,32 @@ Atributos:
   - Login
   - Senha
 
+Métodos:
+  + Fazer_login()
+
+Classe: CLI
+
+Atributos:
+  - Comando
+  - Argumentos
+
+Métodos:
+  + Executar()
+  + Processar_comando()
+  + Mostrar_ajuda()
+
+Classe: Comandos
+
+Métodos:
+  + Cadastrar()
+  + Listar()
+  + Buscar()
+  + Avaliar()
+  + Remover()
+  + Criar_lista()
+  + Gerar_relatorio()
+  + Mostrar_config()
+
 Classe: Mídia
 
 Atributos:
@@ -27,21 +53,32 @@ Atributos:
   - Gênero
   - Ano
   - Classificação_Indicativa
-  - Elenco
+  - Elenco[]
   - Status
+
+Métodos:
+  + Cadastrar_Midia()
+  + Impedir_Duplicidade()
+  + Registrar_status()
 
 Classe: Filme (herda de Mídia)
 
 Atributos:
   - Duração
 
+Métodos:
+  + Registrar_duração()
+
 Classe: Série (herda de Mídia)
 
 Atributos:
   - nº Temporadas
   - nº Episódios
-  - Data de lançamento
   - Nota (opcional)
+
+Métodos:
+  + Registrar_temporadas()
+  + Atualizar_status()
 
 Classe: Temporada (Se relaciona com Série e Episódio)
 
@@ -51,7 +88,10 @@ Atributos:
   - Data de lançamento
   - Nota (opcional)
 
-Classe: Episódio (Se relaciona com Temporada)
+Métodos:
+  + Registrar_episodios()
+
+Classe: Episódio (Se relaciona com Temporada e Avaliação)
 
 Atributos:
   - nº Episódio
@@ -61,32 +101,64 @@ Atributos:
   - Status de visualização
   - Nota (opcional)
 
-Classe: Avaliação (se relaciona com Usuário e Mídia)
+Métodos:
+  + Registrar_status()
+
+Classe: Avaliação (se relaciona com Usuário, Mídia e Episódio)
 
 Atributos:
   - Nota
   - Comentário
 
+Métodos:
+  + Gerar_media()
+  + Registrar_nota()
+  + Registrar_comentario()
+  
 Classe: Histórico de visualização (se relaciona com Usuário e Mídia)
 
 Atributos:
+  - Mídia
   - Data
   - Hora
+
+Métodos:
+  + Salvar_historico()
+  + Registrar_data_hora()
 
 Classe: Lista (se relaciona com Usuário e Mídia)
 
 Atributos:
   - Nome
   - Tipo
-  - Conteúdo []
+  - Conteúdo[]
+
+Métodos:
+  + Criar_lista()
+  + Adicionar_na_lista()
+  + Remover_na_lista()
+  + Apagar_lista()
 
 Classe: Relatório
+
+Métodos:
+  + Gerar_media_geral_catalogo()
+  + Gerar_relatorio()
+  + Media_genero()
+  + Tempo_total_tipo()
+  + Top_10()
+  + Serie_maior_numero_ep_assistidos()
 
 Classe: Configurações
 
 Atributos:
   - Nota Mínima para a Recomendação
   - Limite de listas personalizadas por usuário
+
+Métodos:
+  + Mostrar_config()
+  + Nota_min_recomendado()
+  + Limite_lista()
 
 
 ### Decisões de Desing. 
