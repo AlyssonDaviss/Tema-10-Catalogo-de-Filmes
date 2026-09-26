@@ -13,6 +13,9 @@ relatórios personalizados sobre o consumo e as avaliações do catálogo.</p>
 
 ## Estrutura planejada de classes
 
+<details>
+<summary>Clique para expandir</summary>
+
 Classe: Usuário
 
 Atributos:
@@ -160,6 +163,7 @@ Métodos:
   + Nota_min_recomendado()
   + Limite_lista()
 
+</details>
 
 ### Decisões de Desing. 
 
