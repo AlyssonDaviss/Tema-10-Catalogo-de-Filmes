@@ -17,13 +17,13 @@ class Mídia:
         elenco,
         status
     ):
-        self.titulo = titulo
-        self.tipo = tipo
-        self.genero = genero
-        self.ano = ano
-        self.classificacao_indicativa = classificacao_indicativa
-        self.elenco = elenco
-        self.status = status
+        self.__titulo = titulo
+        self.__tipo = tipo
+        self.__genero = genero
+        self.__ano = ano
+        self.__classificacao_indicativa = classificacao_indicativa
+        self.__elenco = elenco
+        self.__status = status
 
     def Cadastrar_Midia(self):
         """Método: Cadastrar mídia"""
@@ -48,7 +48,7 @@ class Filme(Mídia):
     """
 
     def __init__(self, duracao):
-        self.duracao = duracao
+        self.__duracao = duracao
 
     def Registrar_duração(self):
         """Método: Registrar duração"""
@@ -65,9 +65,9 @@ class Série(Mídia):
     """
 
     def __init__(self, numero_temporadas, numero_episodios, nota=None):
-        self.numero_temporadas = numero_temporadas
-        self.numero_episodios = numero_episodios
-        self.nota = nota
+        self.__numero_temporadas = numero_temporadas
+        self.__numero_episodios = numero_episodios
+        self.__nota = nota
 
     def Registrar_temporadas(self):
         """Método: Registrar temporadas"""
@@ -88,10 +88,10 @@ class Temporada:
     """
 
     def __init__(self, titulo, numero_episodios, data_lancamento, nota=None):
-        self.titulo = titulo
-        self.numero_episodios = numero_episodios
-        self.data_lancamento = data_lancamento
-        self.nota = nota
+        self.__titulo = titulo
+        self.__numero_episodios = numero_episodios
+        self.__data_lancamento = data_lancamento
+        self.__nota = nota
 
     def Registrar_episodios(self):
         """Método: Registrar episódios"""
@@ -117,12 +117,12 @@ class Episódio:
         status_visualizacao,
         nota=None
     ):
-        self.numero_episodio = numero_episodio
-        self.titulo = titulo
-        self.duracao = duracao
-        self.data_lancamento = data_lancamento
-        self.status_visualizacao = status_visualizacao
-        self.nota = nota
+        self.__numero_episodio = numero_episodio
+        self.__titulo = titulo
+        self.__duracao = duracao
+        self.__data_lancamento = data_lancamento
+        self.__status_visualizacao = status_visualizacao
+        self.__nota = nota
 
     def Registrar_status(self):
         """Método: Registrar status"""

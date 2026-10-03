@@ -8,8 +8,8 @@ class Avaliação:
     """
 
     def __init__(self, nota, comentario):
-        self.nota = nota
-        self.comentario = comentario
+        self.__nota = nota
+        self.__comentario = comentario
 
     def Gerar_media(self):
         """Método: Gerar média"""

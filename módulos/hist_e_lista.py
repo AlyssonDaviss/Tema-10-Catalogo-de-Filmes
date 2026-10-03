@@ -8,9 +8,9 @@ class Histórico_de_visualização:
     """
 
     def __init__(self, midia, data, hora):
-        self.midia = midia
-        self.data = data
-        self.hora = hora
+        self.__midia = midia
+        self.__data = data
+        self.__hora = hora
 
     def Salvar_historico(self):
         """Método: Salvar histórico"""
@@ -30,9 +30,9 @@ class Lista:
     """
 
     def __init__(self, nome, tipo, conteudo):
-        self.nome = nome
-        self.tipo = tipo
-        self.conteudo = conteudo
+        self.__nome = nome
+        self.__tipo = tipo
+        self.__conteudo = conteudo
 
     def Criar_lista(self):
         """Método: Criar lista"""

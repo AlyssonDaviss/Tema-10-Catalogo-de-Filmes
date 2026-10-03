@@ -1,0 +1,6 @@
+{
+    "usuario": [{}],
+    "historico": [{}],
+    "listas": [{}],
+    "midias": [{}]
+}
