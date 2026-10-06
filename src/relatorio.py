@@ -1,6 +1,10 @@
 # Classe: Relatório
 class Relatório:
     """
+    A classe Relatório representa a geração de relatórios e estatísticas sobre o catálogo de mídias, 
+    permitindo que os usuários obtenham informações detalhadas sobre as avaliações, histórico de 
+    visualização e desempenho das mídias.
+
     Classe: Relatório
     Métodos: Gerar média geral do catálogo, Gerar relatório, Média por gênero,
     Tempo total por tipo, Top 10 e Série com maior número de episódios assistidos

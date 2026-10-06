@@ -1,6 +1,9 @@
 # Classe: CLI
 class CLI:
     """
+    A classe CLI (Command Line Interface) representa a interface de linha de comando do sistema.
+    Ela permite que os usuários interajam com o sistema por meio de comandos digitados no terminal.
+    
     Classe: CLI
     Atributos: Comando e Argumentos
     Métodos: Executar, Processar comando e Mostrar ajuda

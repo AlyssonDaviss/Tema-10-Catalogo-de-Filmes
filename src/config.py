@@ -1,6 +1,9 @@
 # Classe: Configurações
 class Configurações:
     """
+    A classe Configurações representa as configurações do sistema, permitindo que os usuários 
+    ajustem parâmetros importantes para a recomendação de mídias e gerenciamento de listas personalizadas.
+    
     Classe: Configurações
     Atributos: Nota mínima para a recomendação e limite de listas personalizadas por usuário
     Métodos: Mostrar configuração, Nota mínima recomendada e Limite de lista

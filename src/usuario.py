@@ -1,6 +1,9 @@
 # Classe: Usuário
 class Usuário:
     """
+    A classe Usuário representa um usuário do sistema, permitindo que ele faça login e acesse suas 
+    listas personalizadas, avaliações e histórico de visualização.
+    
     Classe: Usuário
     Atributos: Login e Senha
     Métodos: Fazer login

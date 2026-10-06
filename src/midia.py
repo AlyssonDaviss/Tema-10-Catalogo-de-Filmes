@@ -1,6 +1,10 @@
 # Classe: Mídia
 class Mídia:
     """
+    A classe Mídia representa uma mídia, que pode ser um filme ou uma série, com seus atributos e métodos relacionados.
+    Ela se relaciona com as classes Avaliação, Histórico de visualização e Lista, permitindo que os usuários interajam 
+    com as mídias de acordo com suas preferências e avaliações.
+
     Classe: Mídia
     Atributos: Título, Tipo, Gênero, Ano, Classificação Indicativa,
     Elenco e Status
