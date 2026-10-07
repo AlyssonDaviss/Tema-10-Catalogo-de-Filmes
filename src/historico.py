@@ -16,7 +16,7 @@ class Histórico_de_visualização:
         """Método: Salvar histórico"""
         pass
 
-    def Registrar_data_hora(self):
-        """Método: Registrar data e hora"""
-        pass
+    # def Registrar_data_hora(self):
+    #     """Método: Registrar data e hora"""
+    #     pass
 
