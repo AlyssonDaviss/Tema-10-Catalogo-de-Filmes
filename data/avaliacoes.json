@@ -1,0 +1,32 @@
+ 
+{
+    "0001": {
+        "0001": {
+            "nota": 4.5,
+            "comentarios": [
+                "Ótimo filme!",
+                "Adorei a atuação do elenco."
+            ]
+        },
+        "0002": {
+            "nota": 3.8,
+            "comentarios": [
+                "Divertido, mas poderia ser melhor."
+            ]
+        }
+    },
+    "0002": {
+        "0001": {
+            "nota": 5.0,
+            "comentarios": [
+                "Excelente!"
+            ]
+        },
+        "0003": {
+            "nota": 4.2,
+            "comentarios": [
+                "Emocionante e bem dirigido."
+            ]
+        }
+    }
+}

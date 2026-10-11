@@ -1,0 +1,31 @@
+{
+    "0001": {
+        "tipo": "filme",
+        "titulo": "",
+        "genero": "",
+        "duracao": ""
+    },
+    "0002": {
+        "tipo": "filme",
+        "titulo": "Ola mundo",
+        "genero": "code",
+        "duracao": ""
+    },
+    "0003": {
+        "tipo": "serie",
+        "titulo": "Re: zero",
+        "genero": "isekai",
+        "episodios": [
+            {
+                "id": "",
+                "titulo": "",
+                "duracao": 0
+            },
+            {
+                "id": "",
+                "titulo": "",
+                "duracao": 0
+            }
+        ]
+    }
+}

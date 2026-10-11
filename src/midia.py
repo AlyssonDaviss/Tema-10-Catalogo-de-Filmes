@@ -1,5 +1,8 @@
 # Classe: Mídia
-class Mídia:
+import json
+from pathlib import Path
+
+class Midia:
     """
     A classe Mídia representa uma mídia, que pode ser um filme ou uma série, com seus atributos e métodos relacionados.
     Ela se relaciona com as classes Avaliação, Histórico de visualização e Lista, permitindo que os usuários interajam 
@@ -29,12 +32,60 @@ class Mídia:
         self.__elenco = elenco
         self.__status = status
 
+    def carregar_dados(self):
+        caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
+
+        with open(caminho, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+
+        return dados
+
     def Cadastrar_Midia(self):
-        """Método: Cadastrar mídia"""
-        pass
+        dados = self.carregar_dados()
+
+        novo_id = str(len(dados) + 1).zfill(4)
+
+        if self.__tipo == "filme":
+            dados[novo_id] = {
+                "tipo": self.__tipo,
+                "titulo": self.__titulo,
+                "genero":  self.__genero,
+                "duracao": ""
+            }
+
+        elif self.__tipo == "serie":
+
+            dados[novo_id] = {
+                "tipo": self.__tipo,
+                "titulo": self.__titulo,
+                "genero": self.__genero,
+                "episodios": [
+                    {
+                        "id": "",
+                        "titulo": "",
+                        "duracao": 0
+                    },
+                    {
+                        "id": "",
+                        "titulo": "",
+                        "duracao": 0
+                    }
+                ]
+            }
+        caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
+
+        with open(caminho, "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+        return True
 
     def Impedir_Duplicidade(self):
         """Método: Impedir duplicidade"""
+        dados = self.carregar_dados()
+        if self.__titulo in dados:
+            return False
+        else:
+            self.Cadastrar_Midia()
         pass
 
     def Registrar_status(self):
@@ -43,7 +94,7 @@ class Mídia:
 
 
 # Classe: Filme
-class Filme(Mídia):
+class Filme(Midia):
     """
     Classe: Filme
     Herda de: Mídia
@@ -60,7 +111,7 @@ class Filme(Mídia):
 
 
 # Classe: Série
-class Série(Mídia):
+class Serie(Midia):
     """
     Classe: Série
     Herda de: Mídia
@@ -103,7 +154,7 @@ class Temporada:
 
 
 # Classe: Episódio
-class Episódio:
+class Episodio:
     """
     Classe: Episódio
     Se relaciona com: Temporada e Avaliação
