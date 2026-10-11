@@ -35,8 +35,19 @@ if r == 1:
      status
     )
 
-    m1.Cadastrar_Midia()
-    print(True)
+m1.Cadastrar_Midia()
 
+if tipo == "filme":
+    duracao = input("Duração: ")
+
+    f1 = Filme(
+        titulo, genero, ano,
+        classificacao_indicativa, elenco, status,
+        duracao, m1.obter_id()
+    )
+
+    f1.registrar_duracao()
+
+print(True)
 
 

@@ -1,4 +1,3 @@
-# Classe: Mídia
 import json
 from pathlib import Path
 
@@ -22,7 +21,8 @@ class Midia:
         ano,
         classificacao_indicativa,
         elenco,
-        status
+        status,
+        id = 0
     ):
         self.__titulo = titulo
         self.__tipo = tipo
@@ -31,6 +31,7 @@ class Midia:
         self.__classificacao_indicativa = classificacao_indicativa
         self.__elenco = elenco
         self.__status = status
+        self._id = id
 
     def carregar_dados(self):
         caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
@@ -43,10 +44,10 @@ class Midia:
     def Cadastrar_Midia(self):
         dados = self.carregar_dados()
 
-        novo_id = str(len(dados) + 1).zfill(4)
+        self._id = str(len(dados) + 1).zfill(4)
 
         if self.__tipo == "filme":
-            dados[novo_id] = {
+            dados[self._id] = {
                 "tipo": self.__tipo,
                 "titulo": self.__titulo,
                 "genero":  self.__genero,
@@ -55,7 +56,7 @@ class Midia:
 
         elif self.__tipo == "serie":
 
-            dados[novo_id] = {
+            dados[self.id] = {
                 "tipo": self.__tipo,
                 "titulo": self.__titulo,
                 "genero": self.__genero,
@@ -78,6 +79,9 @@ class Midia:
             json.dump(dados, arquivo, indent=4, ensure_ascii=False)
 
         return True
+
+    def obter_id(self):
+        return self._id
 
     def Impedir_Duplicidade(self):
         """Método: Impedir duplicidade"""
@@ -102,13 +106,31 @@ class Filme(Midia):
     Métodos: Registrar duração
     """
 
-    def __init__(self, duracao):
+class Filme(Midia):
+    def __init__(
+        self, titulo, genero, ano, classificacao_indicativa,
+        elenco, status, duracao, id=0
+    ):
+        super().__init__(
+            titulo, "filme", genero, ano,
+            classificacao_indicativa, elenco, status, id
+        )
+
         self.__duracao = duracao
 
-    def Registrar_duração(self):
+    def registrar_duracao(self):
         """Método: Registrar duração"""
-        pass
+        dados = self.carregar_dados()
+        if self.obter_id() in dados:
+            dados[self.obter_id()]["duracao"] = self.__duracao
 
+            caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
+                
+            with open(caminho, "w", encoding="utf-8") as arquivo:
+                json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+            return True
+        else:
+            return "ID não cadastrado."
 
 # Classe: Série
 class Serie(Midia):
@@ -119,7 +141,8 @@ class Serie(Midia):
     Métodos: Registrar temporadas e Atualizar status
     """
 
-    def __init__(self, numero_temporadas, numero_episodios, nota=None):
+    def __init__(self, titulo, tipo, genero, ano, classificacao_indicativa, elenco, status, numero_temporadas, numero_episodios, nota=None, id=0):
+        super().__init__(titulo, tipo, genero, ano, classificacao_indicativa, elenco, status, id)
         self.__numero_temporadas = numero_temporadas
         self.__numero_episodios = numero_episodios
         self.__nota = nota
