@@ -1,139 +1,46 @@
 {
     "0001": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
+        "tipo": "serie",
+        "titulo": "Code Geass: Hangaku no Lelouch",
+        "genero": "si-fi, war, mecha",
+        "temporadas": {
+            "0001": {
+                "titulo": "R1",
+                "numero_episodios": 25,
+                "data_lancamento": "julho de 2017",
+                "episodios": {}
+            },
+            "0002": {
+                "titulo": "R2",
+                "numero_episodios": 25,
+                "data_lancamento": "Setembro de 2008",
+                "episodios": {}
+            }
+        }
     },
     "0002": {
         "tipo": "filme",
-        "titulo": "Ola mundo",
-        "genero": "code",
-        "duracao": ""
+        "titulo": "Code Geass: fukkatsu no Lelouch",
+        "genero": "si-fi, war, mecha",
+        "duracao": "115"
     },
     "0003": {
         "tipo": "serie",
-        "titulo": "Re: zero",
-        "genero": "isekai",
-        "episodios": [
-            {
-                "id": "",
+        "titulo": "sla",
+        "genero": "",
+        "temporadas": {
+            "0001": {
                 "titulo": "",
-                "duracao": 0
+                "numero_episodios": 1,
+                "data_lancamento": "1",
+                "episodios": {}
             },
-            {
-                "id": "",
-                "titulo": "",
-                "duracao": 0
+            "0002": {
+                "titulo": "1",
+                "numero_episodios": 1,
+                "data_lancamento": "1",
+                "episodios": {}
             }
-        ]
-    },
-    "0004": {
-        "tipo": "filme",
-        "titulo": "e",
-        "genero": "e",
-        "duracao": ""
-    },
-    "0005": {
-        "tipo": "filme",
-        "titulo": "e",
-        "genero": "3",
-        "duracao": ""
-    },
-    "0006": {
-        "tipo": "filme",
-        "titulo": "r",
-        "genero": "e",
-        "duracao": ""
-    },
-    "0007": {
-        "tipo": "filme",
-        "titulo": "e",
-        "genero": "e",
-        "duracao": ""
-    },
-    "0008": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0009": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0010": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0011": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0012": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0013": {
-        "tipo": "filme",
-        "titulo": "e",
-        "genero": "",
-        "duracao": ""
-    },
-    "0014": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0015": {
-        "tipo": "filme",
-        "titulo": "",
-        "genero": "",
-        "duracao": ""
-    },
-    "0016": {
-        "tipo": "filme",
-        "titulo": "teste",
-        "genero": "",
-        "duracao": ""
-    },
-    "0017": {
-        "tipo": "filme",
-        "titulo": "teste2",
-        "genero": "",
-        "duracao": ""
-    },
-    "0018": {
-        "tipo": "filme",
-        "titulo": "teste3",
-        "genero": "",
-        "duracao": ""
-    },
-    "0019": {
-        "tipo": "filme",
-        "titulo": "teste4",
-        "genero": "",
-        "duracao": ""
-    },
-    "0020": {
-        "tipo": "filme",
-        "titulo": "terste6",
-        "genero": "",
-        "duracao": ""
-    },
-    "0021": {
-        "tipo": "filme",
-        "titulo": "teste7",
-        "genero": "",
-        "duracao": "44444"
+        }
     }
 }

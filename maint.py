@@ -48,6 +48,23 @@ if tipo == "filme":
 
     f1.registrar_duracao()
 
+elif tipo == "serie":
+    s1 = Serie(
+        titulo, tipo, genero, ano,
+        classificacao_indicativa, elenco, status,
+        0, 0,
+        id=m1.obter_id()
+    )
+
+    while True:
+        temporada = s1.registrar_temporadas()
+        s1.cadastrar_temporada(temporada)
+
+        continuar = input("Registrar outra temporada? (s/n): ").lower()
+
+        if continuar != "s":
+            break
+
 print(True)
 
 

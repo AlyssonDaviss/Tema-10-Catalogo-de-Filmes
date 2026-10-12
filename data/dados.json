@@ -25,5 +25,23 @@
             "favoritos": [],
             "assistir_mais_tarde": []
         }
+    },
+    "0004": {
+        "usuario": "",
+        "senha": "",
+        "historico": [],
+        "listas": {
+            "favoritos": [],
+            "assistir_mais_tarde": []
+        }
+    },
+    "0005": {
+        "usuario": "C:\\Users\\USUARIO\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe c:/Users/USUARIO/Desktop/Tema-10-Catalogo-de-Filmes/maint.py",
+        "senha": "",
+        "historico": [],
+        "listas": {
+            "favoritos": [],
+            "assistir_mais_tarde": []
+        }
     }
 }

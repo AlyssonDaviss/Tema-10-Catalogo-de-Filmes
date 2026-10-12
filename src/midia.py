@@ -56,23 +56,13 @@ class Midia:
 
         elif self.__tipo == "serie":
 
-            dados[self.id] = {
+            dados[self._id] = {
                 "tipo": self.__tipo,
                 "titulo": self.__titulo,
                 "genero": self.__genero,
-                "episodios": [
-                    {
-                        "id": "",
-                        "titulo": "",
-                        "duracao": 0
-                    },
-                    {
-                        "id": "",
-                        "titulo": "",
-                        "duracao": 0
-                    }
-                ]
+                "temporadas": {}
             }
+
         caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
 
         with open(caminho, "w", encoding="utf-8") as arquivo:
@@ -98,14 +88,6 @@ class Midia:
 
 
 # Classe: Filme
-class Filme(Midia):
-    """
-    Classe: Filme
-    Herda de: Mídia
-    Atributos: Duração
-    Métodos: Registrar duração
-    """
-
 class Filme(Midia):
     def __init__(
         self, titulo, genero, ano, classificacao_indicativa,
@@ -141,17 +123,64 @@ class Serie(Midia):
     Métodos: Registrar temporadas e Atualizar status
     """
 
-    def __init__(self, titulo, tipo, genero, ano, classificacao_indicativa, elenco, status, numero_temporadas, numero_episodios, nota=None, id=0):
-        super().__init__(titulo, tipo, genero, ano, classificacao_indicativa, elenco, status, id)
+    def __init__(
+        self, titulo, tipo, genero, ano,
+        classificacao_indicativa, elenco, status,
+        numero_temporadas=0, numero_episodios=0,
+        nota=None, id=0
+    ):
+        super().__init__(
+            titulo, tipo, genero, ano,
+            classificacao_indicativa, elenco, status, id
+        )
         self.__numero_temporadas = numero_temporadas
         self.__numero_episodios = numero_episodios
         self.__nota = nota
+        self._id_serie = id
 
-    def Registrar_temporadas(self):
+    def registrar_temporadas(self):
         """Método: Registrar temporadas"""
-        pass
+        titulo = input("Título da temporada: ")
+        numero_episodios = int(input("Número de episódios: "))
+        data_lancamento = input("Data de lançamento: ")
 
-    def Atualizar_status(self):
+        temporada = Temporada(
+            titulo,
+            numero_episodios,
+            data_lancamento
+        )
+
+        return temporada
+
+    def cadastrar_temporada(self, temporada):
+        """Método: Cadastrar temporada"""
+        dados = self.carregar_dados()
+        id_serie = str(self._id_serie)
+
+        if id_serie not in dados:
+            return "ID não cadastrado."
+
+        temporadas = dados[id_serie].setdefault("temporadas", {})
+
+        ids = [int(i) for i in temporadas if i.isdigit()]
+
+        id_temporada = str(max(ids, default=0) + 1).zfill(4)
+
+        temporadas[id_temporada] = {
+            "titulo": temporada.obter_titulo(),
+            "numero_episodios": temporada.obter_numero_episodios(),
+            "data_lancamento": temporada.obter_data_lancamento(),
+            "episodios": {}
+        }
+
+        caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
+
+        with open(caminho, "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+        return True
+
+    def atualizar_status(self):
         """Método: Atualizar status"""
         pass
 
@@ -161,20 +190,31 @@ class Temporada:
     """
     Classe: Temporada
     Se relaciona com: Série e Episódio
-    Atributos: Título, nº Episódios, Data de lançamento e Nota opcional
+    Atributos: Título, nº Episódios, Data de lançamento
     Métodos: Registrar episódios
     """
 
-    def __init__(self, titulo, numero_episodios, data_lancamento, nota=None):
+    def __init__(self, titulo, numero_episodios, data_lancamento, id=0):
         self.__titulo = titulo
         self.__numero_episodios = numero_episodios
         self.__data_lancamento = data_lancamento
-        self.__nota = nota
+        self._id = id
 
-    def Registrar_episodios(self):
+    def obter_id(self):
+        return self._id
+
+    def obter_titulo(self):
+        return self.__titulo
+
+    def obter_numero_episodios(self):
+        return self.__numero_episodios
+
+    def obter_data_lancamento(self):
+        return self.__data_lancamento
+
+    def registrar_episodios(self):
         """Método: Registrar episódios"""
         pass
-
 
 # Classe: Episódio
 class Episodio:
