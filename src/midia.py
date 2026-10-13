@@ -140,7 +140,12 @@ class Serie(Midia):
 
     def registrar_temporadas(self):
         """Método: Registrar temporadas"""
-        titulo = input("Título da temporada: ")
+        dados = self.carregar_dados()
+        id_serie = str(self.obter_id())
+
+        temporadas = dados.get(id_serie, {}).get("temporadas", {})
+
+        titulo = f"Temporada {len(temporadas) + 1}"
         numero_episodios = int(input("Número de episódios: "))
         data_lancamento = input("Data de lançamento: ")
 
@@ -165,6 +170,7 @@ class Serie(Midia):
         ids = [int(i) for i in temporadas if i.isdigit()]
 
         id_temporada = str(max(ids, default=0) + 1).zfill(4)
+        temporada._id = id_temporada
 
         temporadas[id_temporada] = {
             "titulo": temporada.obter_titulo(),
@@ -200,6 +206,13 @@ class Temporada:
         self.__data_lancamento = data_lancamento
         self._id = id
 
+    def carregar_dados(self):
+        caminho = Path(__file__).resolve().parent.parent / "data" / "midia_dic.json"
+
+        with open(caminho, "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+
+        return dados
     def obter_id(self):
         return self._id
 
@@ -212,36 +225,70 @@ class Temporada:
     def obter_data_lancamento(self):
         return self.__data_lancamento
 
-    def registrar_episodios(self):
+    def registrar_episodios(self, id_serie, id_temporada, episodio):
         """Método: Registrar episódios"""
-        pass
+        dados = self.carregar_dados()
+
+        id_serie = str(id_serie)
+        id_temporada = str(id_temporada)
+
+        if id_serie not in dados:
+            return "Série não cadastrada."
+
+        temporadas = dados[id_serie].get("temporadas", {})
+
+        if id_temporada not in temporadas:
+            return "Temporada não cadastrada."
+
+        episodios = temporadas[id_temporada].setdefault("episodios", {})
+
+        if len(episodios) >= temporadas[id_temporada]["numero_episodios"]:
+            return "Limite de episódios atingido."
+
+        ids = [int(i) for i in episodios if i.isdigit()]
+        id_episodio = str(max(ids, default=0) + 1).zfill(4)
+
+        episodios[id_episodio] = {
+            "numero_episodio": len(episodios) + 1,
+            "titulo": episodio.obter_titulo(),
+            "duracao": episodio.obter_duracao(),
+            "data_lancamento": episodio.obter_data_lancamento()
+        }
+
+        caminho = (
+            Path(__file__).resolve().parent.parent
+            / "data" / "midia_dic.json"
+        )
+
+        with open(caminho, "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+        return True
 
 # Classe: Episódio
 class Episodio:
     """
     Classe: Episódio
     Se relaciona com: Temporada e Avaliação
-    Atributos: nº Episódio, Título, Duração, Data de lançamento,
-    Status de visualização e Nota opcional
-    Métodos: Registrar status
+    Atributos: Nº Episódio, Título, Duração e Data de lançamento
+    Métodos: Obter atributos
     """
 
     def __init__(
         self,
-        numero_episodio,
         titulo,
         duracao,
-        data_lancamento,
-        status_visualizacao,
-        nota=None
+        data_lancamento
     ):
-        self.__numero_episodio = numero_episodio
         self.__titulo = titulo
         self.__duracao = duracao
         self.__data_lancamento = data_lancamento
-        self.__status_visualizacao = status_visualizacao
-        self.__nota = nota
 
-    def Registrar_status(self):
-        """Método: Registrar status"""
-        pass
+    def obter_titulo(self):
+        return self.__titulo
+
+    def obter_duracao(self):
+        return self.__duracao
+
+    def obter_data_lancamento(self):
+        return self.__data_lancamento

@@ -42,5 +42,188 @@
                 "episodios": {}
             }
         }
+    },
+    "0004": {
+        "tipo": "serie",
+        "titulo": "episodio teste 1",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 12,
+                "data_lancamento": "",
+                "episodios": {}
+            }
+        }
+    },
+    "0005": {
+        "tipo": "serie",
+        "titulo": "teste ep 2",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 12,
+                "data_lancamento": "",
+                "episodios": {}
+            }
+        }
+    },
+    "0006": {
+        "tipo": "serie",
+        "titulo": "teste ep 3",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 2,
+                "data_lancamento": "",
+                "episodios": {}
+            }
+        }
+    },
+    "0007": {
+        "tipo": "serie",
+        "titulo": "teste ep 4",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 2,
+                "data_lancamento": "",
+                "episodios": {}
+            }
+        }
+    },
+    "0008": {
+        "tipo": "serie",
+        "titulo": "1",
+        "genero": "1",
+        "temporadas": {
+            "0001": {
+                "titulo": "1",
+                "numero_episodios": 1,
+                "data_lancamento": "1",
+                "episodios": {}
+            }
+        }
+    },
+    "0009": {
+        "tipo": "serie",
+        "titulo": "teste ep 5 sla",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 4,
+                "data_lancamento": "",
+                "episodios": {}
+            }
+        }
+    },
+    "0010": {
+        "tipo": "serie",
+        "titulo": "teste ep 6",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 12,
+                "data_lancamento": "",
+                "episodios": {}
+            }
+        }
+    },
+    "0011": {
+        "tipo": "serie",
+        "titulo": "",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 34,
+                "data_lancamento": "",
+                "episodios": {
+                    "0001": {
+                        "numero_episodio": 1,
+                        "titulo": "",
+                        "duracao": "",
+                        "data_lancamento": ""
+                    }
+                }
+            }
+        }
+    },
+    "0012": {
+        "tipo": "serie",
+        "titulo": "os simpsons",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "",
+                "numero_episodios": 3,
+                "data_lancamento": "",
+                "episodios": {
+                    "0001": {
+                        "numero_episodio": 1,
+                        "titulo": "ep2",
+                        "duracao": "",
+                        "data_lancamento": ""
+                    }
+                }
+            }
+        }
+    },
+    "0013": {
+        "tipo": "serie",
+        "titulo": "os cabras",
+        "genero": "",
+        "temporadas": {}
+    },
+    "0014": {
+        "tipo": "serie",
+        "titulo": "um cabra da pesada",
+        "genero": "",
+        "temporadas": {
+            "0001": {
+                "titulo": "Temporada 1",
+                "numero_episodios": 333,
+                "data_lancamento": "",
+                "episodios": {
+                    "0001": {
+                        "numero_episodio": 1,
+                        "titulo": "oi",
+                        "duracao": "",
+                        "data_lancamento": ""
+                    }
+                }
+            },
+            "0002": {
+                "titulo": "Temporada 2",
+                "numero_episodios": 3,
+                "data_lancamento": "",
+                "episodios": {
+                    "0001": {
+                        "numero_episodio": 1,
+                        "titulo": "",
+                        "duracao": "",
+                        "data_lancamento": ""
+                    }
+                }
+            },
+            "0003": {
+                "titulo": "Temporada 3",
+                "numero_episodios": 5,
+                "data_lancamento": "",
+                "episodios": {
+                    "0001": {
+                        "numero_episodio": 1,
+                        "titulo": "",
+                        "duracao": "",
+                        "data_lancamento": ""
+                    }
+                }
+            }
+        }
     }
 }

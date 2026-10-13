@@ -1,20 +1,18 @@
+
 from src.user import Usuario
 from src.midia import *
 
 user = input("Diga o Usuário: ")
 pin = input("Diga a senha: ")
 
-# loop para validação de login()
-
 usuario = Usuario(user, pin)
 usuario.cadastrar()
 
-# CLI
-
 print("Menu")
-print("1 cadastrar midia")
-print("2 sair")
-r = int(input())
+print("1 - Cadastrar mídia")
+print("2 - Sair")
+
+r = int(input("Opção: "))
 
 if r == 1:
     titulo = input("Título da mídia: ")
@@ -22,49 +20,89 @@ if r == 1:
     genero = input("Gênero: ")
     ano = input("Ano de lançamento: ")
     classificacao_indicativa = input("Classificação indicativa: ")
-    elenco = input("Elenco: ")
+    elenco = input("Elenco (opcional): ")
     status = input("Status: ")
 
-    m1 = Midia(
-     titulo,
-     tipo,
-     genero,
-     ano,
-     classificacao_indicativa,
-     elenco,
-     status
-    )
+    if tipo not in ("filme", "serie", "série"):
+        print("Tipo de mídia inválido.")
+    else:
+        if tipo == "série":
+            tipo = "serie"
 
-m1.Cadastrar_Midia()
+        m1 = Midia(
+            titulo,
+            tipo,
+            genero,
+            ano,
+            classificacao_indicativa,
+            elenco,
+            status
+        )
 
-if tipo == "filme":
-    duracao = input("Duração: ")
+        m1.Cadastrar_Midia()
 
-    f1 = Filme(
-        titulo, genero, ano,
-        classificacao_indicativa, elenco, status,
-        duracao, m1.obter_id()
-    )
+        if tipo == "filme":
+            duracao = input("Duração: ")
 
-    f1.registrar_duracao()
+            f1 = Filme(
+                titulo, genero, ano,
+                classificacao_indicativa, elenco, status,
+                duracao, m1.obter_id()
+            )
 
-elif tipo == "serie":
-    s1 = Serie(
-        titulo, tipo, genero, ano,
-        classificacao_indicativa, elenco, status,
-        0, 0,
-        id=m1.obter_id()
-    )
+            f1.registrar_duracao()
 
-    while True:
-        temporada = s1.registrar_temporadas()
-        s1.cadastrar_temporada(temporada)
+        elif tipo == "serie":
+            s1 = Serie(
+                titulo, tipo, genero, ano,
+                classificacao_indicativa, elenco, status,
+                0, 0,
+                id=m1.obter_id()
+            )
 
-        continuar = input("Registrar outra temporada? (s/n): ").lower()
+            while True:
+                temporada = s1.registrar_temporadas()
+                s1.cadastrar_temporada(temporada)
 
-        if continuar != "s":
-            break
+                while True:
+                    titulo_ep = input("Título do episódio: ")
+                    duracao_ep = input("Duração do episódio: ")
+                    data_ep = input("Data de lançamento: ")
 
-print(True)
+                    e1 = Episodio(
+                        titulo_ep,
+                        duracao_ep,
+                        data_ep
+                    )
 
+                    resultado = temporada.registrar_episodios(
+                        s1.obter_id(),
+                        temporada.obter_id(),
+                        e1
+                    )
 
+                    if resultado is True:
+                        print("Episódio cadastrado.")
+                    else:
+                        print(resultado)
+                        break
+
+                    continuar_ep = input(
+                        "Registrar outro episódio? (s/n): "
+                    ).lower()
+
+                    if continuar_ep != "s":
+                        break
+
+                continuar = input(
+                    "Registrar outra temporada? (s/n): "
+                ).lower()
+
+                if continuar != "s":
+                    break
+
+elif r == 2:
+    print("Saindo...")
+
+else:
+    print("Opção inválida.")
