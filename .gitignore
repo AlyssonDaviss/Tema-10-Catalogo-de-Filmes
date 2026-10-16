@@ -16,3 +16,7 @@ venv/
 # Arquivos temporários
 *.tmp
 *.log
+
+# Code Runner
+#tempCodeRunnerFile.py
+*tempCodeRunnerFile.py
