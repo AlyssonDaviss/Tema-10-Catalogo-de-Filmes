@@ -53,19 +53,19 @@ class CadastrarUsuario:
         return "sucesso"
 
 
-        def gerar_id(self, dados):
-            return str(len(dados) + 1).zfill(4)
+    def gerar_id(self, dados):
+        return str(len(dados) + 1).zfill(4)
 
-        def criar_dados_usuario(self, usuario):
-            return {
-                "usuario": usuario.login,
-                "senha": usuario.senha,
-                "historico": [],
-                "listas": {
-                    "favoritos": [],
-                    "assistir_mais_tarde": []
-                }
+    def criar_dados_usuario(self, usuario):
+        return {
+            "usuario": usuario.login,
+            "senha": usuario.senha,
+            "historico": [],
+            "listas": {
+                "favoritos": [],
+                "assistir_mais_tarde": []
             }
+        }
 
     def salvar_dados(self, dados):
         with open(self.caminho, "w", encoding="utf-8") as arquivo:

@@ -5,6 +5,7 @@ from repositories.cadastrar_midia import CadastrarMidia
 from src.midia import Midia, Serie, Episodio
 
 
+# Login ou cadastro
 user = input("Diga o Usuário: ")
 pin = input("Diga a senha: ")
 
@@ -27,13 +28,15 @@ else:
 
     print("Usuário cadastrado com sucesso!")
 
-print("Menu")
+
+# Menu principal
+print("\nMenu")
 print("1 - Cadastrar mídia")
 print("2 - Sair")
 
-r = int(input("Opção: "))
+r = input("Opção: ")
 
-if r == 1:
+if r == "1":
     titulo = input("Título da mídia: ")
     tipo = input("Tipo (filme/série): ").lower()
     genero = input("Gênero: ")
@@ -50,13 +53,8 @@ if r == 1:
         tipo = "serie"
 
     midia = Midia(
-        titulo,
-        tipo,
-        genero,
-        ano,
-        classificacao_indicativa,
-        elenco,
-        status
+        titulo, tipo, genero, ano,
+        classificacao_indicativa, elenco, status
     )
 
     cadastro_midia = CadastrarMidia()
@@ -68,6 +66,7 @@ if r == 1:
 
     print("Mídia cadastrada com sucesso!")
 
+    # Cadastro de filme
     if tipo == "filme":
         duracao = input("Duração: ")
 
@@ -75,37 +74,63 @@ if r == 1:
             id_midia, duracao
         )
 
+        if resultado is True:
+            print("Duração cadastrada.")
+        else:
+            print(resultado)
+
+    # Cadastro de série
     elif tipo == "serie":
         serie = Serie(
             titulo, tipo, genero, ano,
             classificacao_indicativa, elenco, status,
-            0, 0,
             id=id_midia
         )
 
         while True:
-            temporada = serie.registrar_temporadas()
+            dados = cadastro_midia.carregar_dados()
+
+            temporadas_existentes = dados.get(
+                str(id_midia), {}
+            ).get("temporadas", {})
+
+            numero_temporada = len(temporadas_existentes) + 1
+
+            numero_episodios = int(
+                input("Número de episódios da temporada: ")
+            )
+
+            data_lancamento = input(
+                "Data de lançamento da temporada: "
+            )
+
+            temporada = serie.registrar_temporadas(
+                numero_temporada,
+                numero_episodios,
+                data_lancamento
+            )
 
             id_temporada = cadastro_midia.cadastrar_temporada(
                 id_midia, temporada
             )
 
-            if not isinstance(id_temporada, str) or not id_temporada.isdigit():
+            if (
+                not isinstance(id_temporada, str)
+                or not id_temporada.isdigit()
+            ):
                 print(id_temporada)
                 break
 
-            # Guarda o ID gerado pelo repositório.
-            temporada._id = id_temporada
+            temporada.definir_id(id_temporada)
 
-            while True:
-                titulo_ep = input("Título do episódio: ")
-                duracao_ep = input("Duração do episódio: ")
-                data_ep = input("Data de lançamento: ")
+            # Cadastro automático dos episódios
+            duracao_media = input(
+                "Duração média dos episódios: "
+            )
 
-                episodio = Episodio(
-                    titulo_ep,
-                    duracao_ep,
-                    data_ep
+            for numero in range(1, numero_episodios + 1):
+                episodio = Episodio.criar_automatico(
+                    numero, duracao_media
                 )
 
                 resultado = cadastro_midia.registrar_episodio(
@@ -114,18 +139,16 @@ if r == 1:
                     episodio
                 )
 
-                if resultado is True:
-                    print("Episódio cadastrado.")
-                else:
+                if resultado is not True:
                     print(resultado)
                     break
 
-                continuar_ep = input(
-                    "Registrar outro episódio? (s/n): "
-                ).lower()
+                print(f"Episódio {numero} cadastrado.")
 
-                if continuar_ep != "s":
-                    break
+            else:
+                print(
+                    f"{numero_episodios} episódios cadastrados automaticamente."
+                )
 
             continuar = input(
                 "Registrar outra temporada? (s/n): "
@@ -134,7 +157,7 @@ if r == 1:
             if continuar != "s":
                 break
 
-elif r == 2:
+elif r == "2":
     print("Saindo...")
 
 else:

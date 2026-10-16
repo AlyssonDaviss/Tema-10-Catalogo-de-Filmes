@@ -109,8 +109,7 @@ class CadastrarMidia:
         episodios[novo_id] = {
             "numero_episodio": len(episodios) + 1,
             "titulo": episodio.obter_titulo(),
-            "duracao": episodio.obter_duracao(),
-            "data_lancamento": episodio.obter_data_lancamento()
+            "duracao": episodio.obter_duracao()
         }
 
         self.salvar_dados(dados)

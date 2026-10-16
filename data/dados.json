@@ -52,5 +52,14 @@
             "favoritos": [],
             "assistir_mais_tarde": []
         }
+    },
+    "0007": {
+        "usuario": "zezin",
+        "senha": "1234",
+        "historico": [],
+        "listas": {
+            "favoritos": [],
+            "assistir_mais_tarde": []
+        }
     }
 }
