@@ -43,5 +43,14 @@
             "favoritos": [],
             "assistir_mais_tarde": []
         }
+    },
+    "0006": {
+        "usuario": "alysson",
+        "senha": "123456",
+        "historico": [],
+        "listas": {
+            "favoritos": [],
+            "assistir_mais_tarde": []
+        }
     }
 }
