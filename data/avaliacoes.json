@@ -1,8 +1,23 @@
 {
     "0001": {
         "0001": {
-            "nota": 10.0,
+            "nota": 9.0,
+            "status": "ASSISTIDO",
+            "comentario": ""
+        },
+        "0010": {
+            "nota": 8.0,
             "status": "completo",
+            "comentario": ""
+        },
+        "0001:temporada:0001:episodio:0001": {
+            "nota": 3.0,
+            "status": "ASSISTINDO",
+            "comentario": ""
+        },
+        "0001:temporada:0001": {
+            "nota": 7.0,
+            "status": "ASSISTIDO",
             "comentario": ""
         }
     }

@@ -6,6 +6,10 @@
         "listas": {
             "favoritos": [],
             "assistir_mais_tarde": []
+        },
+        "configuracoes": {
+            "nota_min_recomendacao": 6.0,
+            "limite_listas_personalizadas": 10
         }
     }
 }

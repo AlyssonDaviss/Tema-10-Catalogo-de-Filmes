@@ -4,17 +4,7 @@ from repositories.cadastrar_avaliacao import CadastrarAvaliacao
 
 
 class Relatório:
-    """
-    Gera relatórios e estatísticas sobre o catálogo de mídias.
-
-    Métodos:
-    - Gerar média geral do catálogo
-    - Gerar relatório
-    - Média por gênero
-    - Tempo total por tipo
-    - Top 10
-    - Série com maior número de episódios assistidos
-    """
+    """Gera relatórios e estatísticas sobre o catálogo de mídias."""
 
     def __init__(self):
         self.cadastro_midia = CadastrarMidia()
@@ -30,7 +20,7 @@ class Relatório:
         return self.cadastro_avaliacao.gerar_media(id_midia)
 
     def _converter_duracao(self, duracao):
-        """Converte durações como '120m' ou '45 minutos' em minutos."""
+        """Converte durações numéricas ou textos para minutos."""
         if isinstance(duracao, (int, float)):
             return float(duracao)
 
@@ -51,7 +41,7 @@ class Relatório:
             return 0
 
     def _obter_episodios(self, midia):
-        """Retorna os episódios registrados em todas as temporadas."""
+        """Retorna os episódios de todas as temporadas."""
         episodios = []
 
         temporadas = midia.get("temporadas", {})
@@ -60,29 +50,54 @@ class Relatório:
             episodios_temporada = temporada.get("episodios", {})
 
             if isinstance(episodios_temporada, dict):
-                episodios.extend(episodios_temporada.values())
+                episodios.extend(
+                    (id_episodio, episodio)
+                    for id_episodio, episodio
+                    in episodios_temporada.items()
+                )
             elif isinstance(episodios_temporada, list):
-                episodios.extend(episodios_temporada)
+                episodios.extend(
+                    (str(indice), episodio)
+                    for indice, episodio
+                    in enumerate(episodios_temporada, start=1)
+                )
 
         return episodios
 
     def Gerar_media_geral_catalogo(self):
-        """Calcula a média das notas médias das mídias avaliadas."""
+        """Calcula a média das médias das mídias que possuem notas."""
         midias = self._carregar_midias()
+        notas = []
 
-        if not midias:
-            return 0
+        for id_midia in midias:
+            media = self._obter_nota(id_midia)
 
-        notas = [
-            self._obter_nota(id_midia)
-            for id_midia in midias
-            if self._obter_nota(id_midia) > 0
-        ]
+            # Nota zero é válida; verifica se há notas registradas.
+            if self._possui_notas(id_midia):
+                notas.append(media)
 
         if not notas:
             return 0
 
         return sum(notas) / len(notas)
+
+    def _possui_notas(self, id_midia):
+        """Verifica se existe ao menos uma nota para a mídia."""
+        avaliacoes = self._carregar_avaliacoes()
+
+        for avaliacoes_usuario in avaliacoes.values():
+            if not isinstance(avaliacoes_usuario, dict):
+                continue
+
+            avaliacao = avaliacoes_usuario.get(str(id_midia))
+
+            if (
+                isinstance(avaliacao, dict)
+                and avaliacao.get("nota") is not None
+            ):
+                return True
+
+        return False
 
     def Gerar_relatorio(self):
         """Exibe um resumo geral do catálogo."""
@@ -93,20 +108,21 @@ class Relatório:
             print("Nenhuma mídia cadastrada.")
             return
 
-        filmes = 0
-        series = 0
-        total_avaliacoes = 0
+        filmes = sum(
+            1 for midia in midias.values()
+            if midia.get("tipo", "").lower() == "filme"
+        )
 
-        for midia in midias.values():
-            tipo = midia.get("tipo", "").lower()
+        series = sum(
+            1 for midia in midias.values()
+            if midia.get("tipo", "").lower() in ("serie", "série")
+        )
 
-            if tipo == "filme":
-                filmes += 1
-            elif tipo in ("serie", "série"):
-                series += 1
-
-        for avaliacoes_usuario in avaliacoes.values():
-            total_avaliacoes += len(avaliacoes_usuario)
+        total_avaliacoes = sum(
+            len(usuario_avaliacoes)
+            for usuario_avaliacoes in avaliacoes.values()
+            if isinstance(usuario_avaliacoes, dict)
+        )
 
         print("\n===== RELATÓRIO DO CATÁLOGO =====")
         print(f"Total de mídias: {len(midias)}")
@@ -123,6 +139,14 @@ class Relatório:
         for id_midia, midia in midias.items():
             media = self._obter_nota(id_midia)
 
+            if not self._possui_notas(id_midia):
+                print(
+                    f"ID: {id_midia} | "
+                    f"Título: {midia.get('titulo', 'Sem título')} | "
+                    "Sem avaliações com nota"
+                )
+                continue
+
             print(
                 f"ID: {id_midia} | "
                 f"Título: {midia.get('titulo', 'Sem título')} | "
@@ -130,26 +154,23 @@ class Relatório:
             )
 
     def Media_genero(self):
-        """Calcula a média das avaliações agrupadas por gênero."""
+        """Calcula a média das mídias avaliadas por gênero."""
         midias = self._carregar_midias()
         generos = {}
 
         for id_midia, midia in midias.items():
+            if not self._possui_notas(id_midia):
+                continue
+
             genero = midia.get("genero", "Sem gênero")
             nota = self._obter_nota(id_midia)
 
-            if nota <= 0:
-                continue
-
-            if genero not in generos:
-                generos[genero] = []
-
-            generos[genero].append(nota)
+            generos.setdefault(genero, []).append(nota)
 
         print("\n===== MÉDIA POR GÊNERO =====")
 
         if not generos:
-            print("Nenhuma mídia avaliada.")
+            print("Nenhuma mídia avaliada com nota.")
             return
 
         for genero, notas in sorted(generos.items()):
@@ -174,7 +195,7 @@ class Relatório:
             elif tipo in ("serie", "série"):
                 episodios = self._obter_episodios(midia)
 
-                for episodio in episodios:
+                for _, episodio in episodios:
                     minutos_series += self._converter_duracao(
                         episodio.get("duracao", 0)
                     )
@@ -192,19 +213,25 @@ class Relatório:
         ranking = []
 
         for id_midia, midia in midias.items():
+            if not self._possui_notas(id_midia):
+                continue
+
             media = self._obter_nota(id_midia)
 
-            if media > 0:
-                ranking.append(
-                    (media, id_midia, midia.get("titulo", "Sem título"))
+            ranking.append(
+                (
+                    media,
+                    id_midia,
+                    midia.get("titulo", "Sem título")
                 )
+            )
 
-        ranking.sort(reverse=True)
+        ranking.sort(key=lambda item: (-item[0], item[2].casefold()))
 
         print("\n===== TOP 10 MÍDIAS =====")
 
         if not ranking:
-            print("Nenhuma mídia avaliada.")
+            print("Nenhuma mídia avaliada com nota.")
             return
 
         for posicao, (media, id_midia, titulo) in enumerate(
@@ -217,29 +244,48 @@ class Relatório:
 
     def Serie_maior_numero_ep_assistidos(self):
         """
-        Estima os episódios assistidos a partir do status da série.
+        Conta episódios marcados como ASSISTIDO nas avaliações.
 
-        Status 'completo' ou 'assistido': considera todos os episódios
-        cadastrados como assistidos.
+        As avaliações de episódios usam a chave composta:
+        série:temporada:episódio.
         """
         midias = self._carregar_midias()
         avaliacoes = self._carregar_avaliacoes()
 
         ranking_series = []
 
-        for id_midia, midia in midias.items():
+        for id_serie, midia in midias.items():
             if midia.get("tipo", "").lower() not in ("serie", "série"):
                 continue
 
             episodios = self._obter_episodios(midia)
             total_assistidos = 0
 
-            for avaliacoes_usuario in avaliacoes.values():
-                avaliacao = avaliacoes_usuario.get(str(id_midia), {})
-                status = avaliacao.get("status", "").strip().lower()
+            for id_temporada, temporada in midia.get(
+                "temporadas", {}
+            ).items():
+                episodios_temporada = temporada.get("episodios", {})
 
-                if status in ("completo", "assistido"):
-                    total_assistidos += len(episodios)
+                if not isinstance(episodios_temporada, dict):
+                    continue
+
+                for id_episodio in episodios_temporada:
+                    chave = (
+                        f"{id_serie}:temporada:{id_temporada}:"
+                        f"episodio:{id_episodio}"
+                    )
+
+                    for avaliacoes_usuario in avaliacoes.values():
+                        if not isinstance(avaliacoes_usuario, dict):
+                            continue
+
+                        avaliacao = avaliacoes_usuario.get(chave, {})
+
+                        if (
+                            isinstance(avaliacao, dict)
+                            and avaliacao.get("status") == "ASSISTIDO"
+                        ):
+                            total_assistidos += 1
 
             ranking_series.append(
                 (
@@ -254,8 +300,11 @@ class Relatório:
             print("Nenhuma série cadastrada.")
             return
 
-        ranking_series.sort(reverse=True)
+        ranking_series.sort(
+            key=lambda item: (-item[0], item[1].casefold())
+        )
+
         quantidade, titulo = ranking_series[0]
 
         print(f"Série: {titulo}")
-        print(f"Episódios assistidos (estimativa): {quantidade}")
+        print(f"Episódios assistidos: {quantidade}")
