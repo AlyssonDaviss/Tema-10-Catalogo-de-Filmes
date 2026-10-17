@@ -1,7 +1,7 @@
-
 from src.user import Usuario
 from src.cli import CLI
 from repositories.cadastrar_pessoa import CadastrarUsuario
+
 
 # Login ou cadastro
 user = input("Diga o Usuário: ").strip()

@@ -60,6 +60,9 @@ class CadastrarMidia:
         if id_midia not in dados:
             return "ID não cadastrado."
 
+        if dados[id_midia].get("tipo") != "filme":
+            return "A mídia não é um filme."
+
         dados[id_midia]["duracao"] = duracao
         self.salvar_dados(dados)
         return True
@@ -70,6 +73,9 @@ class CadastrarMidia:
 
         if id_serie not in dados:
             return "ID não cadastrado."
+
+        if dados[id_serie].get("tipo") != "serie":
+            return "A mídia informada não é uma série."
 
         temporadas = dados[id_serie].setdefault("temporadas", {})
         novo_id = self.gerar_id(temporadas)
@@ -101,7 +107,7 @@ class CadastrarMidia:
         temporada = temporadas[id_temporada]
         episodios = temporada.setdefault("episodios", {})
 
-        if len(episodios) >= temporada["numero_episodios"]:
+        if len(episodios) >= int(temporada["numero_episodios"]):
             return "Limite de episódios atingido."
 
         novo_id = self.gerar_id(episodios)

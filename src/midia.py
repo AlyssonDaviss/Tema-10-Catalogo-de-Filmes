@@ -78,12 +78,19 @@ class Serie(Midia):
         self.__nota = nota
 
     def registrar_temporadas(
-        self, numero_temporada, numero_episodios, data_lancamento
+        self,
+        numero_temporada,
+        numero_episodios,
+        data_lancamento,
+        titulo=None
     ):
-        titulo = f"Temporada {numero_temporada}"
+        if not titulo:
+            titulo = f"Temporada {numero_temporada}"
 
         return Temporada(
-            titulo, numero_episodios, data_lancamento
+            titulo,
+            numero_episodios,
+            data_lancamento
         )
 
     def obter_numero_temporadas(self):

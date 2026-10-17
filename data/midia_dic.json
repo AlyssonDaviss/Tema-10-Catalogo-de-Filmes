@@ -22,5 +22,91 @@
         "titulo": "Rio 2",
         "genero": "comédia",
         "duracao": "120m"
+    },
+    "0005": {
+        "tipo": "serie",
+        "titulo": "Tokyo Revengers",
+        "genero": "ação",
+        "temporadas": {}
+    },
+    "0006": {
+        "tipo": "serie",
+        "titulo": "serie teste",
+        "genero": "serie",
+        "temporadas": {}
+    },
+    "0007": {
+        "tipo": "serie",
+        "titulo": "testando",
+        "genero": "teste",
+        "temporadas": {
+            "0001": {
+                "titulo": "Temporada 1",
+                "numero_episodios": 12,
+                "data_lancamento": "",
+                "episodios": {
+                    "0001": {
+                        "numero_episodio": 1,
+                        "titulo": "Episódio 1",
+                        "duracao": 23.0
+                    },
+                    "0002": {
+                        "numero_episodio": 2,
+                        "titulo": "Episódio 2",
+                        "duracao": 23.0
+                    },
+                    "0003": {
+                        "numero_episodio": 3,
+                        "titulo": "Episódio 3",
+                        "duracao": 23.0
+                    },
+                    "0004": {
+                        "numero_episodio": 4,
+                        "titulo": "Episódio 4",
+                        "duracao": 23.0
+                    },
+                    "0005": {
+                        "numero_episodio": 5,
+                        "titulo": "Episódio 5",
+                        "duracao": 23.0
+                    },
+                    "0006": {
+                        "numero_episodio": 6,
+                        "titulo": "Episódio 6",
+                        "duracao": 23.0
+                    },
+                    "0007": {
+                        "numero_episodio": 7,
+                        "titulo": "Episódio 7",
+                        "duracao": 23.0
+                    },
+                    "0008": {
+                        "numero_episodio": 8,
+                        "titulo": "Episódio 8",
+                        "duracao": 23.0
+                    },
+                    "0009": {
+                        "numero_episodio": 9,
+                        "titulo": "Episódio 9",
+                        "duracao": 23.0
+                    },
+                    "0010": {
+                        "numero_episodio": 10,
+                        "titulo": "Episódio 10",
+                        "duracao": 23.0
+                    },
+                    "0011": {
+                        "numero_episodio": 11,
+                        "titulo": "Episódio 11",
+                        "duracao": 23.0
+                    },
+                    "0012": {
+                        "numero_episodio": 12,
+                        "titulo": "Episódio 12",
+                        "duracao": 23.0
+                    }
+                }
+            }
+        }
     }
 }
