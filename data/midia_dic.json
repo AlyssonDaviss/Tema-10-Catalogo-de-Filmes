@@ -1,1 +1,26 @@
-{}
+{
+    "0001": {
+        "tipo": "filme",
+        "titulo": "De volta para o futuro",
+        "genero": "sci-fi",
+        "duracao": "120m"
+    },
+    "0002": {
+        "tipo": "filme",
+        "titulo": "De volta para o futuro 2",
+        "genero": "sci-fi",
+        "duracao": "120m"
+    },
+    "0003": {
+        "tipo": "filme",
+        "titulo": "Rio",
+        "genero": "comedia",
+        "duracao": "120m"
+    },
+    "0004": {
+        "tipo": "filme",
+        "titulo": "Rio 2",
+        "genero": "comédia",
+        "duracao": "120m"
+    }
+}

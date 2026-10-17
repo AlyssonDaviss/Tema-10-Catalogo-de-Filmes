@@ -1,1 +1,11 @@
-{}
+{
+    "0001": {
+        "usuario": "Davi",
+        "senha": "1234",
+        "historico": [],
+        "listas": {
+            "favoritos": [],
+            "assistir_mais_tarde": []
+        }
+    }
+}

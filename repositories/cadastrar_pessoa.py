@@ -26,20 +26,17 @@ class CadastrarUsuario:
         self.salvar_dados(dados)
         return True
 
-
     def usuario_existe(self, dados, usuario):
         for dados_usuario in dados.values():
             if dados_usuario["usuario"] == usuario.login:
                 return True
         return False
 
-
     def senha_correta(self, dados, usuario):
         for dados_usuario in dados.values():
             if dados_usuario["usuario"] == usuario.login:
                 return dados_usuario["senha"] == usuario.senha
         return False
-
 
     def autenticar(self, usuario):
         dados = self.carregar_dados()
@@ -52,6 +49,15 @@ class CadastrarUsuario:
 
         return "sucesso"
 
+    def obter_id(self, login):
+        """Retorna o ID do usuário a partir do login."""
+        dados = self.carregar_dados()
+
+        for id_usuario, dados_usuario in dados.items():
+            if dados_usuario["usuario"] == login:
+                return id_usuario
+
+        return None
 
     def gerar_id(self, dados):
         return str(len(dados) + 1).zfill(4)
