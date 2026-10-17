@@ -392,5 +392,14 @@
                 }
             }
         }
+    },
+    "0005": {
+        "tipo": "filme",
+        "titulo": "The guys",
+        "genero": "teste",
+        "ano": 2016,
+        "classificacao_indicativa": "L",
+        "elenco": [],
+        "duracao": 90.0
     }
 }

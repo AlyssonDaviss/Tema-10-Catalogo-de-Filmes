@@ -1,33 +1,52 @@
 # Classe: Lista
 class Lista:
     """
-    A classe Lista representa uma lista personalizada de mídias criada por um usuário.
-    Ela se relaciona com as classes Usuário e Mídia, permitindo que os usuários organizem 
-    e gerenciem suas mídias favoritas de acordo com suas preferências.
-    
-    Classe: Lista
-    Se relaciona com: Usuário e Mídia
-    Atributos: Nome, Tipo e Conteúdo
-    Métodos: Criar lista, Adicionar na lista, Remover na lista e Apagar lista
+    Representa uma lista personalizada de mídias criada por um usuário.
+
+    Atributos:
+        Nome: Nome da lista.
+        Tipo: Categoria da lista.
+        Conteúdo: Mídias armazenadas.
     """
 
-    def __init__(self, nome, tipo, conteudo):
+    def __init__(self, nome, tipo, conteudo=None):
         self.__nome = nome
         self.__tipo = tipo
-        self.__conteudo = conteudo
+        self.__conteudo = list(conteudo) if conteudo else []
 
     def Criar_lista(self):
-        """Método: Criar lista"""
-        pass
+        """Cria a lista, garantindo que ela tenha um nome."""
+        if not self.__nome.strip():
+            return "O nome da lista não pode ser vazio."
 
-    def Adicionar_na_lista(self):
-        """Método: Adicionar na lista"""
-        pass
+        return True
 
-    def Remover_na_lista(self):
-        """Método: Remover na lista"""
-        pass
+    def Adicionar_na_lista(self, midia):
+        """Adiciona uma mídia se ela ainda não estiver na lista."""
+        if midia in self.__conteudo:
+            return "Esta mídia já está na lista."
+
+        self.__conteudo.append(midia)
+        return True
+
+    def Remover_na_lista(self, midia):
+        """Remove uma mídia da lista."""
+        if midia not in self.__conteudo:
+            return "Esta mídia não está na lista."
+
+        self.__conteudo.remove(midia)
+        return True
 
     def Apagar_lista(self):
-        """Método: Apagar lista"""
-        pass
+        """Apaga todas as mídias da lista."""
+        self.__conteudo.clear()
+        return True
+
+    def obter_nome(self):
+        return self.__nome
+
+    def obter_tipo(self):
+        return self.__tipo
+
+    def obter_conteudo(self):
+        return self.__conteudo.copy()

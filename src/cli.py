@@ -7,6 +7,9 @@ from src.midia import Filme, Serie
 from src.avaliacao import Avaliação
 from src.relatorio import Relatório
 from src.config import Configuracoes
+from repositories.cadastrar_lista import CadastrarLista
+from src.historico import Histórico_de_visualização
+
 
 
 class CLI:
@@ -30,6 +33,7 @@ class CLI:
             print("6 - Relatórios")
             print("7 - Recomendações")
             print("8 - Configurações")
+            print("9 - Listas personalizadas")
             print("0 - Sair")
 
             opcao = input("Opção: ").strip()
@@ -42,7 +46,8 @@ class CLI:
                 "5": comandos.Atualizar_status,
                 "6": comandos.Gerar_relatorio,
                 "7": comandos.Recomendar,
-                "8": comandos.Mostrar_config
+                "8": comandos.Mostrar_config,
+                "9": comandos.Gerenciar_listas
             }
 
             if opcao == "0":
@@ -55,6 +60,7 @@ class CLI:
                 funcao()
             else:
                 print("Opção inválida.")
+
 
     def Processar_comando(self):
         comandos = Comandos(self.id_usuario)
@@ -768,6 +774,7 @@ class Comandos:
 
         self._confirmar_e_salvar_avaliacao(chave, titulo_completo)
 
+    
     def _registrar_avaliacao(
         self,
         id_midia,
@@ -775,7 +782,10 @@ class Comandos:
         status="NÃO ASSISTIDO",
         comentario=""
     ):
-        """Valida e persiste uma avaliação."""
+        """Salva a avaliação e registra o histórico do usuário."""
+        if self.id_usuario is None:
+            return "É necessário identificar o usuário."
+
         try:
             avaliacao = Avaliação(
                 nota=nota,
@@ -787,13 +797,36 @@ class Comandos:
 
         cadastro = CadastrarAvaliacao()
 
-        return cadastro.registrar_avaliacao(
+        resultado = cadastro.registrar_avaliacao(
             self.id_usuario,
             id_midia,
             avaliacao.obter_nota(),
             avaliacao.obter_status(),
             avaliacao.obter_comentario()
         )
+
+        # Só registra no histórico se a avaliação for salva.
+        if resultado is not True:
+            return resultado
+
+        historico = Histórico_de_visualização(
+            midia=id_midia,
+            nota=avaliacao.obter_nota(),
+            status=avaliacao.obter_status(),
+            comentario=avaliacao.obter_comentario()
+        )
+
+        resultado_historico = historico.Salvar_historico(
+            self.id_usuario
+        )
+
+        if resultado_historico is not True:
+            print(
+                "A avaliação foi salva, mas ocorreu um erro "
+                f"ao registrar o histórico: {resultado_historico}"
+            )
+
+        return True
 
     def _notas_por_midia(self):
         """Agrupa notas por identificador de mídia."""
@@ -975,3 +1008,241 @@ class Comandos:
                 print("Configurações salvas.")
             else:
                 print(resultado)
+
+    
+    def Gerenciar_listas(self):
+        """Menu de gerenciamento de listas personalizadas."""
+        if self.id_usuario is None:
+            print("Não foi possível identificar o usuário.")
+            return
+
+        while True:
+            print("\n===== LISTAS PERSONALIZADAS =====")
+            print("1 - Criar lista")
+            print("2 - Listar minhas listas")
+            print("3 - Adicionar mídia a uma lista")
+            print("4 - Remover mídia de uma lista")
+            print("5 - Apagar lista")
+            print("0 - Voltar")
+
+            opcao = input("Opção: ").strip()
+
+            if opcao == "1":
+                self.Criar_lista()
+            elif opcao == "2":
+                self.Listar_listas()
+            elif opcao == "3":
+                self.Adicionar_midia_lista()
+            elif opcao == "4":
+                self.Remover_midia_lista()
+            elif opcao == "5":
+                self.Apagar_lista()
+            elif opcao == "0":
+                break
+            else:
+                print("Opção inválida.")
+
+    def Criar_lista(self):
+        """Solicita os dados e cria uma lista."""
+        repositorio = CadastrarLista()
+
+        nome = input("Nome da lista (0 para cancelar): ").strip()
+        if nome == "0":
+            return
+
+        if not nome:
+            print("O nome não pode ser vazio.")
+            return
+
+        tipo = input(
+            "Tipo da lista (ex.: Filmes, Séries ou Geral): "
+        ).strip()
+
+        if not tipo:
+            print("O tipo não pode ser vazio.")
+            return
+
+        resultado = repositorio.criar_lista(
+            self.id_usuario, nome, tipo
+        )
+
+        if isinstance(resultado, str) and resultado.isdigit():
+            print(f"Lista criada com sucesso! ID: {resultado}")
+        elif resultado is True:
+            print("Lista criada com sucesso!")
+        else:
+            print(resultado)
+
+    def Listar_listas(self):
+        """Exibe as listas do usuário."""
+        repositorio = CadastrarLista()
+        listas = repositorio.listar_listas(self.id_usuario)
+
+        if not listas:
+            print("Você ainda não possui listas.")
+            return
+
+        print("\n===== MINHAS LISTAS =====")
+
+        for id_lista, lista in listas.items():
+            print(
+                f"ID: {id_lista} | "
+                f"Nome: {lista.get('nome', 'Sem nome')} | "
+                f"Tipo: {lista.get('tipo', 'Geral')} | "
+                f"Mídias: {len(lista.get('conteudo', []))}"
+            )
+
+    def _selecionar_lista(self):
+        """Retorna o ID de uma lista selecionada."""
+        listas = CadastrarLista().listar_listas(self.id_usuario)
+
+        if not listas:
+            print("Você ainda não possui listas.")
+            return None
+
+        print("\n===== SELECIONAR LISTA =====")
+
+        for id_lista, lista in listas.items():
+            print(f"{id_lista} - {lista.get('nome', 'Sem nome')}")
+
+        print("0 - Cancelar")
+        escolha = input("ID da lista: ").strip()
+
+        if escolha == "0":
+            return None
+
+        escolha = escolha.zfill(4)
+
+        if escolha not in listas:
+            print("Lista não encontrada.")
+            return None
+
+        return escolha
+
+    def Adicionar_midia_lista(self):
+        """Adiciona uma mídia cadastrada a uma lista."""
+        id_lista = self._selecionar_lista()
+        if id_lista is None:
+            return
+
+        midias = CadastrarMidia().carregar_dados()
+
+        if not midias:
+            print("Não existem mídias cadastradas.")
+            return
+
+        print("\n===== MÍDIAS DISPONÍVEIS =====")
+
+        for id_midia, midia in midias.items():
+            print(
+                f"{id_midia} - {midia.get('titulo', 'Sem título')} "
+                f"({midia.get('tipo', 'Desconhecido')})"
+            )
+
+        print("0 - Cancelar")
+        id_midia = input("ID da mídia: ").strip()
+
+        if id_midia == "0":
+            return
+
+        id_midia = id_midia.zfill(4)
+
+        midia_encontrada = next(
+            (
+                chave for chave in midias
+                if str(chave).zfill(4) == id_midia
+            ),
+            None
+        )
+
+        if midia_encontrada is None:
+            print("Mídia não encontrada.")
+            return
+
+        resultado = CadastrarLista().adicionar_na_lista(
+            self.id_usuario, id_lista, midia_encontrada
+        )
+
+        if resultado is True:
+            print("Mídia adicionada à lista com sucesso!")
+        else:
+            print(resultado)
+
+    def Remover_midia_lista(self):
+        """Remove uma mídia de uma lista."""
+        repositorio = CadastrarLista()
+        id_lista = self._selecionar_lista()
+
+        if id_lista is None:
+            return
+
+        lista = repositorio.obter_lista(self.id_usuario, id_lista)
+
+        if not lista or not lista.get("conteudo"):
+            print("Essa lista não possui mídias.")
+            return
+
+        midias = CadastrarMidia().carregar_dados()
+
+        print("\n===== MÍDIAS DA LISTA =====")
+
+        for id_midia in lista["conteudo"]:
+            midia = midias.get(str(id_midia))
+
+            if midia:
+                print(
+                    f"{id_midia} - {midia.get('titulo', 'Sem título')}"
+                )
+            else:
+                print(f"{id_midia} - Mídia não encontrada no catálogo")
+
+        print("0 - Cancelar")
+        id_midia = input("ID da mídia a remover: ").strip()
+
+        if id_midia == "0":
+            return
+
+        resultado = repositorio.remover_da_lista(
+            self.id_usuario, id_lista, id_midia
+        )
+
+        if resultado is True:
+            print("Mídia removida da lista.")
+        else:
+            print(resultado)
+
+    def Apagar_lista(self):
+        """Exclui uma lista após confirmação."""
+        repositorio = CadastrarLista()
+        id_lista = self._selecionar_lista()
+
+        if id_lista is None:
+            return
+
+        lista = repositorio.obter_lista(self.id_usuario, id_lista)
+
+        if not lista:
+            print("Lista não encontrada.")
+            return
+
+        print(f"Lista selecionada: {lista.get('nome', 'Sem nome')}")
+        confirmacao = input(
+            "Tem certeza que deseja apagar? (S/N): "
+        ).strip().upper()
+
+        if confirmacao != "S":
+            print("Operação cancelada.")
+            return
+
+        resultado = repositorio.apagar_lista(
+            self.id_usuario, id_lista
+        )
+
+        if resultado is True:
+            print("Lista apagada com sucesso.")
+        else:
+            print(resultado)
+
+    def Remover(self):
+        """Mantém compatibilidade com o método antigo."""
+        self.Apagar_lista()
