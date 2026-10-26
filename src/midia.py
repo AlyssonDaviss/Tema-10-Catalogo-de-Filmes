@@ -1,512 +1,583 @@
+"""Modelo de domínio: Midia (base), Filme, Serie, Temporada e Episodio.
 
-class Midia:
-    """Classe base para filmes e séries."""
+Serie agrega Temporada, que contém Episodio. Filme e Episodio compartilham o
+comportamento de "coisa que se assiste" (duração, status e nota) através do
+mixin ItemAssistivel, então as validações existem uma única vez.
+"""
 
-    def __init__(
-        self,
-        titulo,
-        tipo,
-        genero,
-        ano,
-        classificacao_indicativa,
-        elenco,
-        id=0
-    ):
-        self.titulo = titulo
-        self.tipo = tipo
-        self.genero = genero
-        self.ano = ano
-        self.classificacao_indicativa = classificacao_indicativa
-        self.elenco = elenco
-        self._id = id
+import unicodedata
+from abc import ABC, abstractmethod
+from datetime import date
+from enum import Enum
+
+
+# --------------------------------------------------------------------------
+# Utilitários
+# --------------------------------------------------------------------------
+def normalizar(texto):
+    """Minúsculas e sem acentos: 'Série' -> 'serie'."""
+    texto = unicodedata.normalize("NFD", str(texto).strip().casefold())
+    return "".join(c for c in texto if unicodedata.category(c) != "Mn")
+
+
+def media(valores):
+    """Média aritmética ou None quando não há valores."""
+    valores = list(valores)
+    return sum(valores) / len(valores) if valores else None
+
+
+def _texto(valor, nome):
+    if not isinstance(valor, str) or not valor.strip():
+        raise ValueError(f"{nome} não pode ser vazio.")
+    return valor.strip()
+
+
+def _inteiro_positivo(valor, nome):
+    try:
+        inteiro = int(valor)
+    except (TypeError, ValueError):
+        raise ValueError(f"{nome} deve ser um número inteiro.") from None
+    if inteiro <= 0:
+        raise ValueError(f"{nome} deve ser positivo.")
+    return inteiro
+
+
+class Status(Enum):
+    NAO_ASSISTIDO = "NÃO ASSISTIDO"
+    ASSISTINDO = "ASSISTINDO"
+    ASSISTIDO = "ASSISTIDO"
+
+    @classmethod
+    def converter(cls, valor):
+        """Aceita um Status ou texto livre ('assistido', 'nao-assistido')."""
+        if isinstance(valor, cls):
+            return valor
+        texto = normalizar(valor).replace("_", " ").replace("-", " ")
+        for status in cls:
+            if normalizar(status.value) == texto:
+                return status
+        raise ValueError(
+            "Status inválido. Use: NÃO ASSISTIDO, ASSISTINDO ou ASSISTIDO."
+        )
+
+
+# --------------------------------------------------------------------------
+# Comportamento comum a Filme e Episodio
+# --------------------------------------------------------------------------
+class ItemAssistivel:
+    """Duração (> 0), status e nota (0 a 10, opcional) com validação."""
+
+    def __init__(self, duracao, status=Status.NAO_ASSISTIDO, nota=None):
+        self.duracao = duracao
+        self.status = status
+        self.nota = nota
 
     @property
+    def duracao(self):
+        return self._duracao
+
+    @duracao.setter
+    def duracao(self, valor):
+        try:
+            valor = float(str(valor).replace(",", "."))
+        except ValueError:
+            raise ValueError("A duração deve ser numérica.") from None
+        if not valor > 0:
+            raise ValueError("A duração deve ser maior que zero.")
+        self._duracao = valor
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, valor):
+        self._status = Status.converter(valor)
+
+    @property
+    def nota(self):
+        return self._nota
+
+    @nota.setter
+    def nota(self, valor):
+        if valor is None:
+            self._nota = None
+            return
+        try:
+            nota = float(str(valor).replace(",", "."))
+        except ValueError:
+            raise ValueError("A nota deve ser numérica.") from None
+        if not 0 <= nota <= 10:
+            raise ValueError("A nota deve estar entre 0 e 10.")
+        self._nota = nota
+
+    @property
+    def minutos_assistidos(self):
+        return self._duracao if self._status is Status.ASSISTIDO else 0.0
+
+
+# --------------------------------------------------------------------------
+# Midia (classe base)
+# --------------------------------------------------------------------------
+class Midia(ABC):
+    """Dados comuns a filmes e séries; o resto é definido nas subclasses."""
+
+    TIPO = None
+
+    def __init__(self, titulo, genero, ano, classificacao, elenco=(), id=None):
+        self.titulo = titulo
+        self.genero = genero
+        self.ano = ano
+        self.classificacao = classificacao
+        self.elenco = elenco
+        self.id = id
+
+    # -- atributos validados ------------------------------------------------
+    @property
     def titulo(self):
-        return self.__titulo
+        return self._titulo
 
     @titulo.setter
     def titulo(self, valor):
-        if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("O título não pode ser vazio.")
-        self.__titulo = valor.strip()
-
-    @property
-    def tipo(self):
-        return self.__tipo
-
-    @tipo.setter
-    def tipo(self, valor):
-        if not isinstance(valor, str):
-            raise ValueError("O tipo deve ser um texto.")
-
-        valor = valor.strip().upper()
-
-        if valor not in ("FILME", "SERIE"):
-            raise ValueError("O tipo deve ser FILME ou SERIE.")
-
-        self.__tipo = valor
+        self._titulo = _texto(valor, "O título")
 
     @property
     def genero(self):
-        return self.__genero
+        return self._genero
 
     @genero.setter
     def genero(self, valor):
-        if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("O gênero não pode ser vazio.")
-        self.__genero = valor.strip()
+        self._genero = _texto(valor, "O gênero")
 
     @property
     def ano(self):
-        return self.__ano
+        return self._ano
 
     @ano.setter
     def ano(self, valor):
-        try:
-            ano = int(valor)
-        except (TypeError, ValueError):
-            raise ValueError("O ano deve ser um número inteiro.")
-
-        if ano <= 0:
-            raise ValueError("O ano deve ser positivo.")
-
-        self.__ano = ano
+        self._ano = _inteiro_positivo(valor, "O ano")
 
     @property
-    def classificacao_indicativa(self):
-        return self.__classificacao_indicativa
+    def classificacao(self):
+        return self._classificacao
 
-    @classificacao_indicativa.setter
-    def classificacao_indicativa(self, valor):
-        if valor is None or not str(valor).strip():
-            raise ValueError("Informe a classificação indicativa.")
-        self.__classificacao_indicativa = str(valor).strip()
+    @classificacao.setter
+    def classificacao(self, valor):
+        self._classificacao = _texto(str(valor), "A classificação indicativa")
 
     @property
     def elenco(self):
-        return self.__elenco.copy()
+        return list(self._elenco)
 
     @elenco.setter
     def elenco(self, valor):
         if isinstance(valor, str):
-            valor = [
-                nome.strip()
-                for nome in valor.split(",")
-                if nome.strip()
-            ]
+            valor = valor.split(",")
+        self._elenco = [nome.strip() for nome in valor if nome.strip()]
 
-        if not isinstance(valor, (list, tuple)):
-            raise ValueError("O elenco deve ser uma lista.")
+    @property
+    def tipo(self):
+        return self.TIPO
 
-        self.__elenco = list(valor)
+    @property
+    def chave(self):
+        """Identidade para duplicidade: título + tipo + ano."""
+        return (self.titulo.casefold(), self.tipo, self.ano)
 
-    def obter_id(self):
-        return self._id
+    @property
+    def finalizada(self):
+        return self.status is Status.ASSISTIDO
 
-    def definir_id(self, id):
-        self._id = id
+    # -- contrato das subclasses -------------------------------------------
+    @property
+    @abstractmethod
+    def status(self): ...
 
-    def obter_ano(self):
-        return self.ano
+    @property
+    @abstractmethod
+    def nota_media(self): ...
 
-    def obter_classificacao_indicativa(self):
-        return self.classificacao_indicativa
+    @property
+    @abstractmethod
+    def duracao_total(self): ...
 
-    def obter_elenco(self):
-        return self.elenco
+    @property
+    @abstractmethod
+    def minutos_assistidos(self): ...
 
+    @abstractmethod
+    def definir_status(self, status, temporada=None, episodio=None):
+        """Altera o status e devolve [(descrição, minutos)] do que foi concluído agora."""
+
+    @abstractmethod
+    def avaliar(self, nota, temporada=None, episodio=None): ...
+
+    @abstractmethod
+    def _detalhe(self): ...
+
+    def para_dict(self):
+        return {
+            "id": self.id,
+            "tipo": self.tipo,
+            "titulo": self.titulo,
+            "genero": self.genero,
+            "ano": self.ano,
+            "classificacao": self.classificacao,
+            "elenco": self.elenco,
+        }
+
+    @staticmethod
+    def de_dict(dados):
+        classe = {"FILME": Filme, "SERIE": Serie}[dados["tipo"]]
+        return classe._de_dict(dados)
+
+    # -- métodos especiais -------------------------------------------------
     def __str__(self):
-        return f"{self.titulo} ({self.ano}) - {self.tipo}"
+        nota = self.nota_media
+        nota = "sem nota" if nota is None else f"nota {nota:.1f}"
+        return (
+            f"{self.titulo} ({self.ano}) [{self.tipo}] | {self._detalhe()} "
+            f"| {self.status.value} | {nota}"
+        )
 
     def __repr__(self):
         return (
-            f"{self.__class__.__name__}("
-            f"titulo={self.titulo!r}, "
-            f"ano={self.ano!r}, "
-            f"id={self._id!r})"
+            f"{type(self).__name__}(id={self.id!r}, titulo={self.titulo!r}, "
+            f"ano={self.ano!r})"
         )
 
     def __eq__(self, outro):
         if not isinstance(outro, Midia):
             return NotImplemented
-
-        return (
-            self.titulo.casefold(),
-            self.tipo,
-            self.ano
-        ) == (
+        return (self.titulo.casefold(), self.tipo) == (
             outro.titulo.casefold(),
             outro.tipo,
-            outro.ano
         )
+
+    def __hash__(self):
+        return hash((self.titulo.casefold(), self.tipo))
 
     def __lt__(self, outro):
+        """Ordena por nota média; mídia sem nota fica abaixo das avaliadas."""
         if not isinstance(outro, Midia):
             return NotImplemented
+        return self._nota_para_ordenar() < outro._nota_para_ordenar()
 
-        return (
-            self.titulo.casefold(),
-            self.ano
-        ) < (
-            outro.titulo.casefold(),
-            outro.ano
-        )
+    def _nota_para_ordenar(self):
+        nota = self.nota_media
+        return -1 if nota is None else nota
 
 
-class Filme(Midia):
-    """Representa um filme."""
+# --------------------------------------------------------------------------
+# Filme
+# --------------------------------------------------------------------------
+class Filme(ItemAssistivel, Midia):
+    TIPO = "FILME"
 
     def __init__(
-        self,
-        titulo,
-        genero,
-        ano,
-        classificacao_indicativa,
-        elenco,
-        duracao=1,
-        id=0
+        self, titulo, genero, ano, classificacao, elenco, duracao,
+        status=Status.NAO_ASSISTIDO, nota=None, id=None,
     ):
-        super().__init__(
-            titulo,
-            "FILME",
-            genero,
-            ano,
-            classificacao_indicativa,
-            elenco,
-            id
-        )
-        self.duracao = duracao
+        Midia.__init__(self, titulo, genero, ano, classificacao, elenco, id)
+        ItemAssistivel.__init__(self, duracao, status, nota)
 
     @property
-    def duracao(self):
-        return self.__duracao
+    def nota_media(self):
+        return self.nota
 
-    @duracao.setter
-    def duracao(self, valor):
-        try:
-            valor = float(valor)
-        except (TypeError, ValueError):
-            raise ValueError("A duração deve ser numérica.")
-
-        if valor <= 0:
-            raise ValueError("A duração deve ser maior que zero.")
-
-        self.__duracao = valor
-
-    def obter_duracao(self):
+    @property
+    def duracao_total(self):
         return self.duracao
 
-    def __str__(self):
-        return f"{super().__str__()} - {self.duracao:g} minutos"
+    def definir_status(self, status, temporada=None, episodio=None):
+        self._sem_episodios(temporada, episodio)
+        status = Status.converter(status)
+        concluido = status is Status.ASSISTIDO and not self.finalizada
+        self.status = status
+        return [(self.titulo, self.duracao)] if concluido else []
+
+    def avaliar(self, nota, temporada=None, episodio=None):
+        self._sem_episodios(temporada, episodio)
+        self.nota = nota
+
+    @staticmethod
+    def _sem_episodios(temporada, episodio):
+        if temporada is not None or episodio is not None:
+            raise ValueError("Filmes não possuem temporadas nem episódios.")
+
+    def _detalhe(self):
+        return f"{self.duracao:g} min"
+
+    def para_dict(self):
+        return {
+            **super().para_dict(),
+            "duracao": self.duracao,
+            "status": self.status.value,
+            "nota": self.nota,
+        }
+
+    @classmethod
+    def _de_dict(cls, d):
+        return cls(
+            d["titulo"], d["genero"], d["ano"], d["classificacao"],
+            d["elenco"], d["duracao"], d["status"], d["nota"], d["id"],
+        )
 
 
-class Serie(Midia):
-    """Representa uma série composta por temporadas."""
-
+# --------------------------------------------------------------------------
+# Episodio, Temporada e Serie
+# --------------------------------------------------------------------------
+class Episodio(ItemAssistivel):
     def __init__(
-        self,
-        titulo,
-        tipo,
-        genero,
-        ano,
-        classificacao_indicativa,
-        elenco,
-        numero_temporadas=0,
-        numero_episodios=0,
-        id=0
+        self, temporada, numero, titulo, duracao, data_lancamento=None,
+        status=Status.NAO_ASSISTIDO, nota=None,
     ):
-        super().__init__(
-            titulo,
-            "SERIE",
-            genero,
-            ano,
-            classificacao_indicativa,
-            elenco,
-            id
-        )
-
-        if numero_temporadas < 0 or numero_episodios < 0:
-            raise ValueError("As quantidades não podem ser negativas.")
-
-        self.__temporadas = []
-
-    @property
-    def temporadas(self):
-        return self.__temporadas.copy()
-
-    def registrar_temporadas(
-        self,
-        numero_temporada,
-        numero_episodios,
-        duracao_media,
-        data_lancamento,
-        titulo=None
-    ):
-        """Cria uma temporada e gera seus episódios automaticamente."""
-        if not titulo:
-            titulo = f"Temporada {numero_temporada}"
-
-        quantidade = int(numero_episodios)
-
-        if quantidade <= 0:
-            raise ValueError(
-                "A temporada deve ter pelo menos um episódio."
-            )
-
-        temporada = Temporada(
-            titulo=titulo,
-            numero=numero_temporada,
-            data_lancamento=data_lancamento
-        )
-
-        for numero in range(1, quantidade + 1):
-            episodio = Episodio.criar_automatico(
-                numero=numero,
-                duracao=duracao_media,
-                data_lancamento=data_lancamento
-            )
-            temporada.adicionar_episodio(episodio)
-
-        self.adicionar_temporada(temporada)
-        return temporada
-
-    def adicionar_temporada(self, temporada):
-        if not isinstance(temporada, Temporada):
-            raise TypeError("É necessário informar uma Temporada.")
-
-        if any(
-            item.numero == temporada.numero
-            for item in self.__temporadas
-        ):
-            raise ValueError("Essa temporada já está cadastrada.")
-
-        self.__temporadas.append(temporada)
-        self.__temporadas.sort(key=lambda item: item.numero)
-
-    def obter_numero_temporadas(self):
-        return len(self.__temporadas)
-
-    def obter_numero_episodios(self):
-        return sum(len(temporada) for temporada in self.__temporadas)
-
-    def __len__(self):
-        return self.obter_numero_episodios()
-
-    def __str__(self):
-        return (
-            f"{super().__str__()} - "
-            f"{self.obter_numero_temporadas()} temporadas, "
-            f"{self.obter_numero_episodios()} episódios"
-        )
-    
-    def obter_temporadas(self):
-        return self.__temporadas
-
-
-class Temporada:
-    """Agrupa os episódios de uma temporada."""
-
-    def __init__(
-        self,
-        titulo,
-        numero=None,
-        data_lancamento=None,
-        id=0
-    ):
-        if not isinstance(titulo, str) or not titulo.strip():
-            raise ValueError(
-                "O título da temporada não pode ser vazio."
-            )
-
-        if numero is None:
-            numero = 1
-
-        try:
-            numero = int(numero)
-        except (TypeError, ValueError):
-            raise ValueError(
-                "O número da temporada deve ser inteiro."
-            )
-
-        if numero <= 0:
-            raise ValueError(
-                "O número da temporada deve ser positivo."
-            )
-
-        self.__titulo = titulo.strip()
-        self.__numero = numero
-        self.__data_lancamento = data_lancamento
-        self.__episodios = []
-        self._id = id
-
-    @property
-    def titulo(self):
-        return self.__titulo
-
-    @property
-    def numero(self):
-        return self.__numero
-
-    @property
-    def data_lancamento(self):
-        return self.__data_lancamento
-
-    @property
-    def episodios(self):
-        return self.__episodios.copy()
-
-    def adicionar_episodio(self, episodio):
-        if not isinstance(episodio, Episodio):
-            raise TypeError("É necessário informar um Episodio.")
-
-        if any(
-            item.numero == episodio.numero
-            for item in self.__episodios
-        ):
-            raise ValueError("Esse episódio já está cadastrado.")
-
-        self.__episodios.append(episodio)
-        self.__episodios.sort(key=lambda item: item.numero)
-
-    def obter_id(self):
-        return self._id
-
-    def definir_id(self, id):
-        self._id = id
-
-    def obter_titulo(self):
-        return self.titulo
-
-    def obter_numero(self):
-        return self.numero
-
-    def obter_numero_episodios(self):
-        return len(self.__episodios)
-
-    def obter_duracao_media(self):
-        if not self.__episodios:
-            return 0
-
-        return (
-            sum(ep.duracao for ep in self.__episodios)
-            / len(self.__episodios)
-        )
-
-    def obter_duracao_total(self):
-        return sum(ep.duracao for ep in self.__episodios)
-
-    def obter_data_lancamento(self):
-        return self.data_lancamento
-
-    def __len__(self):
-        return len(self.__episodios)
-
-    def __str__(self):
-        return f"{self.titulo} - {len(self)} episódios"
-
-
-class Episodio:
-    """Representa um episódio individual de uma série."""
-
-    def __init__(
-        self,
-        titulo,
-        duracao,
-        numero=1,
-        data_lancamento=None,
-        id=0
-    ):
-        if not isinstance(titulo, str) or not titulo.strip():
-            raise ValueError(
-                "O título do episódio não pode ser vazio."
-            )
-
-        self.__titulo = titulo.strip()
+        super().__init__(duracao, status, nota)
+        self.temporada = temporada
         self.numero = numero
-        self.duracao = duracao
+        self.titulo = titulo
         self.data_lancamento = data_lancamento
-        self._id = id
+
+    @property
+    def temporada(self):
+        return self._temporada
+
+    @temporada.setter
+    def temporada(self, valor):
+        self._temporada = _inteiro_positivo(valor, "O número da temporada")
 
     @property
     def numero(self):
-        return self.__numero
+        return self._numero
 
     @numero.setter
     def numero(self, valor):
-        try:
-            valor = int(valor)
-        except (TypeError, ValueError):
-            raise ValueError(
-                "O número do episódio deve ser inteiro."
-            )
-
-        if valor <= 0:
-            raise ValueError(
-                "O número do episódio deve ser positivo."
-            )
-
-        self.__numero = valor
+        self._numero = _inteiro_positivo(valor, "O número do episódio")
 
     @property
     def titulo(self):
-        return self.__titulo
+        return self._titulo
 
-    @property
-    def duracao(self):
-        return self.__duracao
-
-    @duracao.setter
-    def duracao(self, valor):
-        try:
-            valor = float(valor)
-        except (TypeError, ValueError):
-            raise ValueError("A duração deve ser numérica.")
-
-        if valor <= 0:
-            raise ValueError("A duração deve ser maior que zero.")
-
-        self.__duracao = valor
+    @titulo.setter
+    def titulo(self, valor):
+        self._titulo = _texto(valor, "O título do episódio")
 
     @property
     def data_lancamento(self):
-        return self.__data_lancamento
+        return self._data_lancamento
 
     @data_lancamento.setter
     def data_lancamento(self, valor):
-        self.__data_lancamento = valor
+        if valor is None or isinstance(valor, date):
+            self._data_lancamento = valor
+            return
+        try:
+            self._data_lancamento = date.fromisoformat(valor)
+        except (TypeError, ValueError):
+            raise ValueError("A data deve estar no formato AAAA-MM-DD.") from None
+
+    def para_dict(self):
+        lancamento = self.data_lancamento
+        return {
+            "numero": self.numero,
+            "titulo": self.titulo,
+            "duracao": self.duracao,
+            "data_lancamento": lancamento.isoformat() if lancamento else None,
+            "status": self.status.value,
+            "nota": self.nota,
+        }
 
     @classmethod
-    def criar_automatico(
-        cls,
-        numero,
-        duracao,
-        data_lancamento=None
-    ):
+    def de_dict(cls, temporada, d):
         return cls(
-            titulo=f"Episódio {numero}",
-            duracao=duracao,
-            numero=numero,
-            data_lancamento=data_lancamento
+            temporada, d["numero"], d["titulo"], d["duracao"],
+            d["data_lancamento"], d["status"], d["nota"],
         )
-
-    def obter_id(self):
-        return self._id
-
-    def definir_id(self, id):
-        self._id = id
-
-    def obter_titulo(self):
-        return self.titulo
-
-    def obter_duracao(self):
-        return self.duracao
 
     def __str__(self):
-        return f"{self.titulo} - {self.duracao:g} minutos"
+        nota = "sem nota" if self.nota is None else f"nota {self.nota:g}"
+        return (
+            f"T{self.temporada}E{self.numero} {self.titulo} "
+            f"({self.duracao:g} min) | {self.status.value} | {nota}"
+        )
 
     def __repr__(self):
-        return (
-            f"Episodio(titulo={self.titulo!r}, "
-            f"numero={self.numero!r}, "
-            f"duracao={self.duracao!r})"
+        return f"Episodio(T{self.temporada}E{self.numero}, {self.titulo!r})"
+
+
+class Temporada:
+    def __init__(self, numero):
+        self.numero = numero
+        self._episodios = {}
+
+    @property
+    def numero(self):
+        return self._numero
+
+    @numero.setter
+    def numero(self, valor):
+        self._numero = _inteiro_positivo(valor, "O número da temporada")
+
+    @property
+    def episodios(self):
+        return [self._episodios[n] for n in sorted(self._episodios)]
+
+    def adicionar_episodio(self, episodio):
+        if episodio.temporada != self.numero:
+            raise ValueError("O episódio pertence a outra temporada.")
+        if episodio.numero in self._episodios:
+            raise ValueError(
+                f"O episódio {episodio.numero} já existe na temporada {self.numero}."
+            )
+        self._episodios[episodio.numero] = episodio
+
+    def episodio(self, numero):
+        try:
+            return self._episodios[int(numero)]
+        except (KeyError, ValueError):
+            raise ValueError(
+                f"O episódio {numero} não existe na temporada {self.numero}."
+            ) from None
+
+    @property
+    def duracao_total(self):
+        return sum(ep.duracao for ep in self._episodios.values())
+
+    @property
+    def nota_media(self):
+        return media(ep.nota for ep in self._episodios.values() if ep.nota is not None)
+
+    def __len__(self):
+        return len(self._episodios)
+
+    def __iter__(self):
+        return iter(self.episodios)
+
+    def __str__(self):
+        return f"Temporada {self.numero} ({len(self)} episódios)"
+
+
+class Serie(Midia):
+    TIPO = "SERIE"
+
+    def __init__(self, titulo, genero, ano, classificacao, elenco=(), id=None):
+        super().__init__(titulo, genero, ano, classificacao, elenco, id)
+        self._temporadas = {}
+
+    # -- estrutura ------------------------------------------------------
+    @property
+    def temporadas(self):
+        return [self._temporadas[n] for n in sorted(self._temporadas)]
+
+    @property
+    def episodios(self):
+        return [ep for temporada in self.temporadas for ep in temporada]
+
+    def temporada(self, numero):
+        try:
+            return self._temporadas[int(numero)]
+        except (KeyError, ValueError):
+            raise ValueError(f"A temporada {numero} não existe.") from None
+
+    def adicionar_episodio(self, episodio):
+        temporada = self._temporadas.setdefault(
+            episodio.temporada, Temporada(episodio.temporada)
         )
+        temporada.adicionar_episodio(episodio)
+
+    def criar_temporada(self, numero, quantidade, duracao, data_lancamento=None):
+        """Cria uma temporada com 'quantidade' episódios genéricos ("Episódio N")."""
+        numero = _inteiro_positivo(numero, "O número da temporada")
+        quantidade = _inteiro_positivo(quantidade, "A quantidade de episódios")
+        if numero in self._temporadas:
+            raise ValueError(f"A temporada {numero} já existe.")
+        # Constrói tudo antes de inserir: uma entrada inválida não deixa lixo.
+        episodios = [
+            Episodio(numero, n, f"Episódio {n}", duracao, data_lancamento)
+            for n in range(1, quantidade + 1)
+        ]
+        for episodio in episodios:
+            self.adicionar_episodio(episodio)
+
+    # -- valores calculados ---------------------------------------------
+    @property
+    def status(self):
+        """Derivado dos episódios: a série é ASSISTIDA quando todos estão."""
+        status = {ep.status for ep in self.episodios}
+        if not status or status == {Status.NAO_ASSISTIDO}:
+            return Status.NAO_ASSISTIDO
+        if status == {Status.ASSISTIDO}:
+            return Status.ASSISTIDO
+        return Status.ASSISTINDO
+
+    @property
+    def nota_media(self):
+        return media(ep.nota for ep in self.episodios if ep.nota is not None)
+
+    @property
+    def duracao_total(self):
+        return sum(ep.duracao for ep in self.episodios)
+
+    @property
+    def minutos_assistidos(self):
+        return sum(ep.minutos_assistidos for ep in self.episodios)
+
+    @property
+    def episodios_assistidos(self):
+        return sum(1 for ep in self.episodios if ep.status is Status.ASSISTIDO)
+
+    # -- operações ------------------------------------------------------
+    def definir_status(self, status, temporada=None, episodio=None):
+        """Aplica o status à série toda, a uma temporada ou a um episódio."""
+        status = Status.converter(status)
+        concluidos = []
+        for ep in self._alvo(temporada, episodio):
+            if status is Status.ASSISTIDO and ep.status is not Status.ASSISTIDO:
+                concluidos.append(
+                    (f"{self.titulo} T{ep.temporada}E{ep.numero}", ep.duracao)
+                )
+            ep.status = status
+        return concluidos
+
+    def avaliar(self, nota, temporada=None, episodio=None):
+        if temporada is None or episodio is None:
+            raise ValueError("Para avaliar uma série informe temporada e episódio.")
+        self.temporada(temporada).episodio(episodio).nota = nota
+
+    def _alvo(self, temporada, episodio):
+        if temporada is None:
+            if episodio is not None:
+                raise ValueError("Informe também a temporada do episódio.")
+            alvo = self.episodios
+        elif episodio is None:
+            alvo = self.temporada(temporada).episodios
+        else:
+            alvo = [self.temporada(temporada).episodio(episodio)]
+        if not alvo:
+            raise ValueError("A série ainda não possui episódios.")
+        return alvo
+
+    def _detalhe(self):
+        return f"{len(self.temporadas)} temporada(s), {len(self)} episódios"
+
+    def para_dict(self):
+        return {
+            **super().para_dict(),
+            "temporadas": [
+                {"numero": t.numero, "episodios": [e.para_dict() for e in t]}
+                for t in self.temporadas
+            ],
+        }
+
+    @classmethod
+    def _de_dict(cls, d):
+        serie = cls(d["titulo"], d["genero"], d["ano"], d["classificacao"],
+                    d["elenco"], d["id"])
+        for temporada in d["temporadas"]:
+            for ep in temporada["episodios"]:
+                serie.adicionar_episodio(Episodio.de_dict(temporada["numero"], ep))
+        return serie
+
+    def __len__(self):
+        """Número total de episódios."""
+        return sum(len(t) for t in self._temporadas.values())

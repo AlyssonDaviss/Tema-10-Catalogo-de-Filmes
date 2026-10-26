@@ -1,65 +1,39 @@
+"""Configurações do sistema (valores lidos de settings.json)."""
+
+from dataclasses import asdict, dataclass, replace
+
+
+@dataclass
 class Configuracoes:
-    """
-    Gerencia as configurações do sistema para recomendações
-    de mídias e limites de listas personalizadas.
-    """
+    nota_minima_recomendado: float = 7.0
+    limite_listas: int = 10
+    # horas = minutos * multiplicador_duracao (padrão: 1/60)
+    multiplicador_duracao: float = 1 / 60
+    casas_decimais: int = 2
 
-    def __init__(
-        self,
-        nota_min_recomendacao=7.0,
-        limite_listas_personalizadas=10
-    ):
-        self.nota_min_recomendacao = nota_min_recomendacao
-        self.limite_listas_personalizadas = limite_listas_personalizadas
+    def __post_init__(self):
+        try:
+            self.nota_minima_recomendado = float(self.nota_minima_recomendado)
+            self.limite_listas = int(self.limite_listas)
+            self.multiplicador_duracao = float(self.multiplicador_duracao)
+            self.casas_decimais = int(self.casas_decimais)
+        except (TypeError, ValueError):
+            raise ValueError("Valor de configuração inválido.") from None
+        if not 0 <= self.nota_minima_recomendado <= 10:
+            raise ValueError("A nota mínima deve estar entre 0 e 10.")
+        if self.limite_listas < 0:
+            raise ValueError("O limite de listas não pode ser negativo.")
+        if self.multiplicador_duracao <= 0:
+            raise ValueError("O multiplicador de duração deve ser positivo.")
+        if not 0 <= self.casas_decimais <= 6:
+            raise ValueError("As casas decimais devem estar entre 0 e 6.")
 
-    def Mostrar_config(self):
-        """Exibe as configurações atuais."""
-        print("\n===== CONFIGURAÇÕES =====")
-        print(
-            f"Nota mínima para recomendação: "
-            f"{self.nota_min_recomendacao}"
-        )
-        print(
-            f"Limite de listas personalizadas: "
-            f"{self.limite_listas_personalizadas}"
-        )
+    def horas(self, minutos):
+        """Converte minutos em horas com o arredondamento configurado."""
+        return round(minutos * self.multiplicador_duracao, self.casas_decimais)
 
-    def Nota_min_recomendado(self):
-        """Consulta ou altera a nota mínima recomendada."""
-        while True:
-            try:
-                nota = float(
-                    input(
-                        "Nova nota mínima para recomendação (0 a 10): "
-                    ).strip().replace(",", ".")
-                )
-
-                if not 0 <= nota <= 10:
-                    print("A nota deve estar entre 0 e 10.")
-                    continue
-
-                self.nota_min_recomendacao = nota
-                return True
-
-            except ValueError:
-                print("Digite uma nota numérica válida.")
-
-    def Limite_lista(self):
-        """Consulta ou altera o limite de listas personalizadas."""
-        while True:
-            try:
-                limite = int(
-                    input(
-                        "Novo limite de listas personalizadas: "
-                    ).strip()
-                )
-
-                if limite < 0:
-                    print("O limite não pode ser negativo.")
-                    continue
-
-                self.limite_listas_personalizadas = limite
-                return True
-
-            except ValueError:
-                print("Digite um número inteiro válido.")
+    def definir(self, chave, valor):
+        """Devolve uma cópia com a chave alterada (e validada)."""
+        if chave not in asdict(self):
+            raise ValueError(f"Configuração desconhecida: '{chave}'.")
+        return replace(self, **{chave: valor})

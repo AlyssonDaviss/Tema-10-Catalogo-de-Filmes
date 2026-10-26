@@ -1,405 +1,278 @@
 {
-    "0001": {
-        "tipo": "serie",
-        "titulo": "serie teste",
-        "genero": "teste",
-        "ano": 2020,
-        "classificacao_indicativa": "L",
-        "elenco": [],
+    "1": {
+        "id": 1,
+        "tipo": "FILME",
+        "titulo": "Interestelar",
+        "genero": "Ficção Científica",
+        "ano": 2014,
+        "classificacao": "10",
+        "elenco": [
+            "Matthew McConaughey",
+            "Anne Hathaway"
+        ],
+        "duracao": 169.0,
         "status": "ASSISTIDO",
-        "temporadas": {
-            "0001": {
+        "nota": 9.5
+    },
+    "2": {
+        "id": 2,
+        "tipo": "FILME",
+        "titulo": "Matrix",
+        "genero": "Ficção Científica",
+        "ano": 1999,
+        "classificacao": "14",
+        "elenco": [
+            "Keanu Reeves",
+            "Carrie-Anne Moss"
+        ],
+        "duracao": 136.0,
+        "status": "ASSISTIDO",
+        "nota": 9.0
+    },
+    "3": {
+        "id": 3,
+        "tipo": "FILME",
+        "titulo": "Parasita",
+        "genero": "Suspense",
+        "ano": 2019,
+        "classificacao": "16",
+        "elenco": [
+            "Song Kang-ho",
+            "Choi Woo-shik"
+        ],
+        "duracao": 132.0,
+        "status": "ASSISTIDO",
+        "nota": 8.5
+    },
+    "4": {
+        "id": 4,
+        "tipo": "FILME",
+        "titulo": "Cidade de Deus",
+        "genero": "Crime",
+        "ano": 2002,
+        "classificacao": "18",
+        "elenco": [
+            "Alexandre Rodrigues",
+            "Leandro Firmino"
+        ],
+        "duracao": 130.0,
+        "status": "ASSISTIDO",
+        "nota": 9.0
+    },
+    "5": {
+        "id": 5,
+        "tipo": "FILME",
+        "titulo": "Toy Story",
+        "genero": "Animação",
+        "ano": 1995,
+        "classificacao": "L",
+        "elenco": [
+            "Tom Hanks",
+            "Tim Allen"
+        ],
+        "duracao": 81.0,
+        "status": "ASSISTINDO",
+        "nota": null
+    },
+    "6": {
+        "id": 6,
+        "tipo": "FILME",
+        "titulo": "O Poderoso Chefão",
+        "genero": "Crime",
+        "ano": 1972,
+        "classificacao": "16",
+        "elenco": [
+            "Marlon Brando",
+            "Al Pacino"
+        ],
+        "duracao": 175.0,
+        "status": "NÃO ASSISTIDO",
+        "nota": null
+    },
+    "7": {
+        "id": 7,
+        "tipo": "SERIE",
+        "titulo": "Breaking Bad",
+        "genero": "Crime",
+        "ano": 2008,
+        "classificacao": "16",
+        "elenco": [
+            "Bryan Cranston",
+            "Aaron Paul"
+        ],
+        "temporadas": [
+            {
                 "numero": 1,
-                "titulo": "Temporada 1",
-                "numero_episodios": 12,
-                "duracao_media": 23.0,
-                "data_lancamento": "2016-08-12",
-                "episodios": {
-                    "0001": {
+                "episodios": [
+                    {
                         "numero": 1,
                         "titulo": "Episódio 1",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": 9.5
                     },
-                    "0002": {
+                    {
                         "numero": 2,
                         "titulo": "Episódio 2",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": 9.0
                     },
-                    "0003": {
+                    {
                         "numero": 3,
                         "titulo": "Episódio 3",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": 8.5
                     },
-                    "0004": {
+                    {
                         "numero": 4,
                         "titulo": "Episódio 4",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
                         "nota": null
                     },
-                    "0005": {
+                    {
                         "numero": 5,
                         "titulo": "Episódio 5",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
                         "nota": null
                     },
-                    "0006": {
+                    {
                         "numero": 6,
                         "titulo": "Episódio 6",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
                         "nota": null
                     },
-                    "0007": {
+                    {
                         "numero": 7,
                         "titulo": "Episódio 7",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    "0008": {
-                        "numero": 8,
-                        "titulo": "Episódio 8",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    "0009": {
-                        "numero": 9,
-                        "titulo": "Episódio 9",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    "0010": {
-                        "numero": 10,
-                        "titulo": "Episódio 10",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    "0011": {
-                        "numero": 11,
-                        "titulo": "Episódio 11",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    "0012": {
-                        "numero": 12,
-                        "titulo": "Episódio 12",
-                        "duracao": 23.0,
-                        "data_lancamento": "2016-08-12",
-                        "status": "NÃO ASSISTIDO",
+                        "duracao": 47.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
                         "nota": null
                     }
-                }
+                ]
             }
-        }
+        ]
     },
-    "0002": {
-        "tipo": "serie",
-        "titulo": "Teste serie",
-        "genero": "teste",
-        "ano": 2015,
-        "classificacao_indicativa": "L",
-        "elenco": [],
-        "temporadas": {
-            "0001": {
+    "8": {
+        "id": 8,
+        "tipo": "SERIE",
+        "titulo": "Dark",
+        "genero": "Ficção Científica",
+        "ano": 2017,
+        "classificacao": "16",
+        "elenco": [
+            "Louis Hofmann",
+            "Lisa Vicari"
+        ],
+        "temporadas": [
+            {
                 "numero": 1,
-                "titulo": "Temporada 1",
-                "numero_episodios": 12,
-                "duracao_media": 23.0,
-                "data_lancamento": "",
-                "episodios": {
-                    "0001": {
+                "episodios": [
+                    {
                         "numero": 1,
                         "titulo": "Episódio 1",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": 9.0
                     },
-                    "0002": {
+                    {
                         "numero": 2,
                         "titulo": "Episódio 2",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": 8.5
                     },
-                    "0003": {
+                    {
                         "numero": 3,
                         "titulo": "Episódio 3",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": null
                     },
-                    "0004": {
+                    {
                         "numero": 4,
                         "titulo": "Episódio 4",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": null
                     },
-                    "0005": {
+                    {
                         "numero": 5,
                         "titulo": "Episódio 5",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
                     },
-                    "0006": {
+                    {
                         "numero": 6,
                         "titulo": "Episódio 6",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
                     },
-                    "0007": {
+                    {
                         "numero": 7,
                         "titulo": "Episódio 7",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
                     },
-                    "0008": {
+                    {
                         "numero": 8,
                         "titulo": "Episódio 8",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
                     },
-                    "0009": {
+                    {
                         "numero": 9,
                         "titulo": "Episódio 9",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
                     },
-                    "0010": {
+                    {
                         "numero": 10,
                         "titulo": "Episódio 10",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0011": {
-                        "numero": 11,
-                        "titulo": "Episódio 11",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0012": {
-                        "numero": 12,
-                        "titulo": "Episódio 12",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
                     }
-                }
+                ]
             }
-        }
+        ]
     },
-    "0003": {
-        "tipo": "filme",
-        "titulo": "sla",
-        "genero": "sla",
-        "ano": 2,
-        "classificacao_indicativa": "L",
+    "9": {
+        "id": 9,
+        "tipo": "FILME",
+        "titulo": "101 Dalmatas",
+        "genero": "drama",
+        "ano": 1990,
+        "classificacao": "L",
         "elenco": [],
-        "duracao": 23.0
-    },
-    "0004": {
-        "tipo": "serie",
-        "titulo": "serie boa",
-        "genero": "teste",
-        "ano": 2016,
-        "classificacao_indicativa": "L",
-        "elenco": [],
-        "temporadas": {
-            "0001": {
-                "numero": 1,
-                "titulo": "Oi boa noite",
-                "numero_episodios": 12,
-                "duracao_media": 23.0,
-                "data_lancamento": "",
-                "episodios": {
-                    "0001": {
-                        "numero": 1,
-                        "titulo": "Episódio 1",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0002": {
-                        "numero": 2,
-                        "titulo": "Episódio 2",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0003": {
-                        "numero": 3,
-                        "titulo": "Episódio 3",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0004": {
-                        "numero": 4,
-                        "titulo": "Episódio 4",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0005": {
-                        "numero": 5,
-                        "titulo": "Episódio 5",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0006": {
-                        "numero": 6,
-                        "titulo": "Episódio 6",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0007": {
-                        "numero": 7,
-                        "titulo": "Episódio 7",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0008": {
-                        "numero": 8,
-                        "titulo": "Episódio 8",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0009": {
-                        "numero": 9,
-                        "titulo": "Episódio 9",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0010": {
-                        "numero": 10,
-                        "titulo": "Episódio 10",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0011": {
-                        "numero": 11,
-                        "titulo": "Episódio 11",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0012": {
-                        "numero": 12,
-                        "titulo": "Episódio 12",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    }
-                }
-            },
-            "0002": {
-                "numero": 2,
-                "titulo": "oi bom dia",
-                "numero_episodios": 13,
-                "duracao_media": 23.0,
-                "data_lancamento": "",
-                "episodios": {
-                    "0001": {
-                        "numero": 1,
-                        "titulo": "Episódio 1",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0002": {
-                        "numero": 2,
-                        "titulo": "Episódio 2",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0003": {
-                        "numero": 3,
-                        "titulo": "Episódio 3",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0004": {
-                        "numero": 4,
-                        "titulo": "Episódio 4",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0005": {
-                        "numero": 5,
-                        "titulo": "Episódio 5",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0006": {
-                        "numero": 6,
-                        "titulo": "Episódio 6",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0007": {
-                        "numero": 7,
-                        "titulo": "Episódio 7",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0008": {
-                        "numero": 8,
-                        "titulo": "Episódio 8",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0009": {
-                        "numero": 9,
-                        "titulo": "Episódio 9",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0010": {
-                        "numero": 10,
-                        "titulo": "Episódio 10",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0011": {
-                        "numero": 11,
-                        "titulo": "Episódio 11",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0012": {
-                        "numero": 12,
-                        "titulo": "Episódio 12",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    },
-                    "0013": {
-                        "numero": 13,
-                        "titulo": "Episódio 13",
-                        "duracao": 23.0,
-                        "data_lancamento": ""
-                    }
-                }
-            }
-        }
-    },
-    "0005": {
-        "tipo": "filme",
-        "titulo": "The guys",
-        "genero": "teste",
-        "ano": 2016,
-        "classificacao_indicativa": "L",
-        "elenco": [],
-        "duracao": 90.0
+        "duracao": 120.0,
+        "status": "ASSISTIDO",
+        "nota": 7.0
     }
 }

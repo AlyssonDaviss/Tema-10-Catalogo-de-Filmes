@@ -20,3 +20,5 @@ venv/
 # Code Runner
 #tempCodeRunnerFile.py
 *tempCodeRunnerFile.py
+# Cache do pytest
+.pytest_cache/

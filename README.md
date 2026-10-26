@@ -1,328 +1,186 @@
-# Tema-10-Catalogo-de-Filmes
+# Tema 10 — Catálogo de Filmes e Séries
 
-## Descrição do projeto e objetivo
+Sistema em linha de comando (subcomandos e menu interativo, com login) para gerenciar um **catálogo pessoal de
+filmes e séries**: cadastro, temporadas e episódios, avaliações, status de visualização, histórico,
+listas personalizadas e relatórios de consumo. Projeto 1 de POO (UFCA).
 
-<p>  TotalView é um sistema em linha de comando (CLI) para gerenciar um catálogo pessoal de 
-filmes e séries, com avaliações, status de visualização, temporadas/episódios, histórico e 
-relatórios de consumo de mídia. Além disso, possibilita acompanhar o progresso de séries e 
-comparar avaliações entre mídias.</p>
+## Como usar
 
-<p>  Objetivamos o gerenciamento de mídias, permitindo cadastrar, acompanhar e avaliar 
-filmes e séries, organizar listas e favoritos, registrar o histórico de visualização e gerar 
-relatórios personalizados sobre o consumo e as avaliações do catálogo.</p>
+Python 3.10+, sem dependências para rodar (o `pytest` só é necessário para os testes).
 
-## Estrutura planejada de classes
+Há duas formas de usar, com a mesma lógica por baixo:
 
-<details>
-<summary>UML Textual Simplificado</summary>
+**1. Menu interativo** — sem argumentos. Pergunta passo a passo; ideal para explorar.
 
-Classe: Usuário
+```bash
+python main.py
+```
 
-Atributos:
-- Login
-- Senha
+**2. Subcomandos** — `python main.py <grupo> <ação> [argumentos]`; ideal para scripts e para o dia a dia.
+`python main.py -h` mostra tudo e `python main.py midia -h` mostra um grupo.
 
-Métodos:
-+ Fazer_login()
+```bash
+python main.py usuario entrar Davi              # login (cria a conta se for nova); fica salvo
+python main.py exemplos                         # filmes e séries de exemplo (seed)
+python main.py midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136
+python main.py midia listar --status assistido
+python main.py midia avaliar 1 9.5
+python main.py serie adicionar-temporada 2 -t 1 --episodios 10 --duracao 50
+python main.py serie atualizar-status 2 assistido -t 1 -e 3
+python main.py midia relatorio top
+```
 
-Classe: CLI
+### Subcomandos
 
-Atributos:
-- Comando
-- Argumentos
+| Comando | O que faz |
+|---|---|
+| `midia adicionar --tipo filme\|serie --titulo T --genero G --ano A --classificacao C [--duracao M] [--elenco "a, b"]` | Cadastra (`--duracao` só para filmes) |
+| `midia listar [--tipo] [--status] [--genero] [--busca]` | Lista e filtra o catálogo |
+| `midia avaliar ID NOTA [-t TEMPORADA -e EPISODIO]` | Nota de 0 a 10 para filme ou episódio |
+| `midia atualizar-status ID STATUS` | `NÃO ASSISTIDO`, `ASSISTINDO` ou `ASSISTIDO` |
+| `midia recomendar` / `midia remover ID` | Sorteia sugestões / remove |
+| `midia relatorio {geral,notas,tempo,top,series,periodo,historico}` | Relatórios (`--por genero\|tipo`, `--por semana\|mes`, `-n 10`) |
+| `serie adicionar-temporada ID --episodios Q --duracao M [-t T]` | Cria a temporada já com Q episódios |
+| `serie adicionar-episodio ID -t T -n N --titulo X --duracao M` | Adiciona um episódio avulso |
+| `serie atualizar-status ID STATUS [-t T] [-e E]` | Na série toda, numa temporada ou num episódio |
+| `serie episodios ID` | Mostra temporadas e episódios |
+| `usuario entrar NOME` / `sair` / `quem` | Conta (a sessão fica em `data/sessao.json`) |
+| `usuario criar-lista NOME` / `adicionar-favorito ID` | Listas e favoritos |
+| `usuario adicionar-na-lista NOME ID` / `remover-da-lista NOME ID` / `apagar-lista NOME` | Gerencia as listas |
+| `usuario listas [NOME]` / `usuario historico` | Consulta |
+| `config mostrar` / `config definir CHAVE VALOR` | Lê e altera `settings.json` |
+| `exemplos` / `menu` | Carrega o seed / abre o menu |
 
-Métodos:
-+ Executar()
-+ Processar_comando()
-+ Mostrar_ajuda()
+Comandos que usam o histórico ou as listas (`atualizar-status`, `usuario ...`, relatórios `periodo` e `historico`)
+exigem `usuario entrar` antes; o programa avisa e mostra como fazer.
 
-Classe: Comandos
+## Testes
 
-Métodos:
-+ Cadastrar()
-+ Listar()
-+ Buscar()
-+ Avaliar()
-+ Remover()
-+ Criar_lista()
-+ Gerar_relatorio()
-+ Mostrar_config()
+```bash
+pip install -r requirement.txt
+pytest
+```
 
-Classe: Mídia
+## Estrutura
 
-Atributos:
-- Título
-- Tipo
-- Gênero
-- Ano
-- Classificação_Indicativa
-- Elenco[]
-- Status
+```
+main.py                         ponto de entrada: subcomandos ou menu
+settings.json                   configurações do sistema
+data/                           arquivos JSON (gerados em execução)
+  dados.json                    usuários
+  midia_dic.json                mídias, temporadas e episódios
+  listas.json / historico.json  listas e histórico, por usuário
+  sessao.json                   usuário conectado (subcomandos)
+repositories/
+  base.py                       leitura/gravação JSON (compartilhada)
+  cadastrar_midia.py            CadastrarMidia  (duplicidade, IDs)
+  cadastrar_pessoa.py           CadastrarUsuario (login, listas e histórico do usuário)
+  cadastrar_lista.py            CadastrarLista
+  cadastrar_historico.py        CadastrarHistorico
+  cadastrar_config.py           CadastrarConfiguracoes (settings.json)
+  cadastrar_sessao.py           CadastrarSessao
+src/
+  midia.py                      Midia, Filme, Serie, Temporada, Episodio, Status
+  user.py                       Usuario
+  listas.py                     ListaPersonalizada
+  historico.py                  RegistroHistorico
+  config.py                     Configuracoes
+  relatorio.py                  relatórios (funções puras)
+  seed.py                       dados de exemplo
+  comandos.py                   Comandos: regras de uso, sem entrada/saída de tela
+  cli.py                        subcomandos (argparse)
+  menu.py                       menu interativo
+tests/                          pytest (domínio, repositórios, relatórios, subcomandos e menu)
+```
 
-Métodos:
-+ Cadastrar_Midia()
-+ Impedir_Duplicidade()
-+ Registrar_status()
+### settings.json
 
-Classe: Filme (herda de Mídia)
+| Chave | Significado |
+|---|---|
+| `nota_minima_recomendado` | Nota mínima para uma mídia ser "recomendada" |
+| `limite_listas` | Máximo de listas por usuário (inclui Favoritos) |
+| `multiplicador_duracao` | `horas = minutos × multiplicador` (padrão 1/60) |
+| `casas_decimais` | Arredondamento das horas |
 
-Atributos:
-- Duração
+Também podem ser alteradas pelo menu **Configurações**.
 
-Métodos:
-+ Registrar_duração()
-
-Classe: Série (herda de Mídia)
-
-Atributos:
-- nº Temporadas
-- nº Episódios
-- Nota (opcional)
-
-Métodos:
-+ Registrar_temporadas()
-+ Atualizar_status()
-
-Classe: Temporada (Se relaciona com Série e Episódio)
-
-Atributos:
-- Título
-- nº Episódios
-- Data de lançamento
-- Nota (opcional)
-
-Métodos:
-+ Registrar_episodios()
-
-Classe: Episódio (Se relaciona com Temporada e Avaliação)
-
-Atributos:
-- nº Episódio
-- Título
-- Duração
-- Data de lançamento
-- Status de visualização
-- Nota (opcional)
-
-Métodos:
-+ Registrar_status()
-
-Classe: Avaliação (se relaciona com Usuário, Mídia e Episódio)
-
-Atributos:
-- Nota
-- Comentário
-
-Métodos:
-+ Gerar_media()
-+ Registrar_nota()
-+ Registrar_comentario()
-
-Classe: Histórico de visualização (se relaciona com Usuário e Mídia)
-
-Atributos:
-- Mídia
-- Data
-- Hora
-
-Métodos:
-+ Salvar_historico()
-+ Registrar_data_hora()
-
-Classe: Lista (se relaciona com Usuário e Mídia)
-
-Atributos:
-- Nome
-- Tipo
-- Conteúdo[]
-
-Métodos:
-+ Criar_lista()
-+ Adicionar_na_lista()
-+ Remover_na_lista()
-+ Apagar_lista()
-
-Classe: Relatório
-
-Métodos:
-+ Gerar_media_geral_catalogo()
-+ Gerar_relatorio()
-+ Media_genero()
-+ Tempo_total_tipo()
-+ Top_10()
-+ Serie_maior_numero_ep_assistidos()
-
-Classe: Configurações
-
-Atributos:
-- Nota Mínima para a Recomendação
-- Limite de listas personalizadas por usuário
-
-Métodos:
-+ Mostrar_config()
-+ Nota_min_recomendado()
-+ Limite_lista()
-
-</details>
-
-<details>
-<summary>Ver a estrutura</summary>
+## Diagrama
 
 ```mermaid
 classDiagram
-
-    class Usuario {
-        -String login
-        -String senha
-        +fazerLogin()
-    }
-
-    class CLI {
-        -String comando
-        -String argumentos
-        +executar()
-        +processarComando()
-        +mostrarAjuda()
-    }
-
-    class Comandos {
-        +cadastrar()
-        +listar()
-        +buscar()
-        +avaliar()
-        +remover()
-        +criarLista()
-        +gerarRelatorio()
-        +mostrarConfig()
-    }
-
     class Midia {
-        -String titulo
-        -String tipo
-        -String genero
-        -int ano
-        -String classificacaoIndicativa
-        -String[] elenco
-        -String status
-        +cadastrarMidia()
-        +impedirDuplicidade()
-        +registrarStatus()
+        <<abstract>>
+        +titulo
+        +genero
+        +ano
+        +classificacao
+        +elenco
+        +status*
+        +nota_media*
+        +definir_status()*
+        +avaliar()*
     }
-
-    class Filme {
-        -int duracao
-        +registrarDuracao()
+    class ItemAssistivel {
+        +duracao
+        +status
+        +nota
     }
-
+    class Filme
     class Serie {
-        -int numeroTemporadas
-        -int numeroEpisodios
-        -float nota
-        +registrarTemporadas()
-        +atualizarStatus()
+        +criar_temporada()
+        +adicionar_episodio()
     }
-
-    class Temporada {
-        -String titulo
-        -int numeroEpisodios
-        -Date dataLancamento
-        -float nota
-        +registrarEpisodios()
-    }
-
+    class Temporada
     class Episodio {
-        -int numeroEpisodio
-        -String titulo
-        -int duracao
-        -Date dataLancamento
-        -String statusVisualizacao
-        -float nota
-        +registrarStatus()
+        +temporada
+        +numero
+        +titulo
+        +data_lancamento
     }
-
-    class Avaliacao {
-        -float nota
-        -String comentario
-        +gerarMedia()
-        +registrarNota()
-        +registrarComentario()
+    class Usuario {
+        +criar_lista()
+        +adicionar_favorito()
+        +registrar_conclusao()
     }
+    class ListaPersonalizada
+    class RegistroHistorico
+    class Comandos
+    class CLI
+    class Menu
+    class CadastrarMidia
+    class CadastrarUsuario
 
-    class HistoricoVisualizacao {
-        -Midia midia
-        -Date data
-        -Time hora
-        +salvarHistorico()
-        +registrarDataHora()
-    }
-
-    class Lista {
-        -String nome
-        -String tipo
-        -Midia[] conteudo
-        +criarLista()
-        +adicionarNaLista()
-        +removerNaLista()
-        +apagarLista()
-    }
-
-    class Relatorio {
-        +gerarMediaGeralCatalogo()
-        +gerarRelatorio()
-        +mediaGenero()
-        +tempoTotalTipo()
-        +top10()
-        +serieMaiorNumeroEpAssistidos()
-    }
-
-    class Configuracoes {
-        -float notaMinimaRecomendacao
-        -int limiteListasPersonalizadas
-        +mostrarConfig()
-        +notaMinRecomendado()
-        +limiteLista()
-    }
-
-    %% Herança
-    Midia <|-- Filme : Herda de
-    Midia <|-- Serie : Herda de
-
-    %% Relações
-    Serie "1" --> "*" Temporada : Possui
-    Temporada "1" --> "*" Episodio : Possui
-
-    Usuario "1" --> "*" Avaliacao : Realiza
-    Midia "1" --> "*" Avaliacao : Recebe
-    Episodio "1" --> "*" Avaliacao : Recebe
-
-    Usuario "1" --> "*" HistoricoVisualizacao : Possui
-    Midia "1" --> "*" HistoricoVisualizacao : Registrada
-
-    Usuario "1" --> "*" Lista : Possui
-    Lista "*" --> "*" Midia : Contem
-
-    CLI --> Comandos : Executa
-    Comandos --> Midia : Gerencia
-    Comandos --> Avaliacao : Gerencia
-    Comandos --> Lista : Gerencia
-    Comandos --> Relatorio : Gera
-    Comandos --> Configuracoes : Consulta
+    Midia <|-- Filme
+    Midia <|-- Serie
+    ItemAssistivel <|-- Filme
+    ItemAssistivel <|-- Episodio
+    Serie "1" *-- "*" Temporada
+    Temporada "1" *-- "*" Episodio
+    Usuario "1" *-- "*" ListaPersonalizada
+    Usuario "1" *-- "*" RegistroHistorico
+    CLI --> Comandos
+    Menu --> Comandos
+    Comandos --> CadastrarMidia
+    Comandos --> CadastrarUsuario
+    Comandos --> Usuario
 ```
 
-</details>
+## Decisões de implementação
 
-### Decisões de Design
-
-```
-- Dividi Série, Temporada e Episódio, pois cada um possui características próprias que são melhores representadas separadamente.
-
-- Duração não participa de Mídia, pois não é compatível com a estrutura de série (temporadas e episódios), e sim com episódios e filmes.
-  - Da mesma forma, subdividi os atributos de Série entre Episódio e Temporada, pois não é usual saber a duração de uma série inteira,
-  assim como outros atributos.
-
-- A nota média da série e a nota geral do catálogo são calculadas automaticamente a partir das avaliações registradas.
-  - O campo "Nota" em Série, Temporada e Episódio representa a média calculada a partir das avaliações registradas em Avaliação,
-  e não uma nova avaliação independente.
-
-- Como Favoritos é um tipo de lista, não vejo motivo para fazer ela como uma subclasse, então coloquei como um tipo.
-```
+- **Duração fica em Filme e Episodio**: uma série não tem duração própria, ela é a soma dos episódios.
+  Filme e Episodio compartilham duração, status e nota pelo mixin `ItemAssistivel`, então a validação existe uma vez só.
+- **Status e nota da série são calculados**, não armazenados: a série é `ASSISTIDO` quando todos os
+  episódios são `ASSISTIDO`, `ASSISTINDO` quando há progresso parcial. A nota média da série é a média das notas dos episódios.
+- **Catálogo pessoal:** status e notas ficam na própria mídia; o `Usuario` possui listas e histórico.
+- **`__eq__` compara título + tipo**; a regra de duplicidade usa título + tipo + **ano** (`Midia.chave`).
+- **Temporadas:** informar a quantidade de episódios cria os episódios automaticamente ("Episódio N").
+- **Relatórios** consideram só mídias finalizadas (`ASSISTIDO`); o tempo assistido e "séries com mais
+  episódios assistidos" contam os episódios `ASSISTIDO`, mesmo de séries ainda em andamento.
+- **Histórico** registra, com data e hora, a conclusão de cada filme e episódio; o relatório por
+  período soma esses minutos por semana ISO ou por mês.
+- **Duas interfaces, uma lógica:** `Comandos` aplica as regras e não imprime nada; os subcomandos e o menu
+  só leem entradas e mostram resultados, então se comportam igual.
+- **Login nos subcomandos:** `usuario entrar` guarda o usuário em `data/sessao.json`; sem ele, comandos que dependem
+  de usuário avisam como entrar.
+- **Persistência:** JSON com gravação atômica (arquivo temporário + troca); erros de regra são `ValueError`:
+  os subcomandos mostram `Erro: ...` (código de saída 1) e o menu mostra a mensagem sem encerrar.

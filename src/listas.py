@@ -1,52 +1,38 @@
-# Classe: Lista
-class Lista:
-    """
-    Representa uma lista personalizada de mídias criada por um usuário.
+"""Lista personalizada de mídias (guarda apenas os IDs, sem duplicatas)."""
 
-    Atributos:
-        Nome: Nome da lista.
-        Tipo: Categoria da lista.
-        Conteúdo: Mídias armazenadas.
-    """
 
-    def __init__(self, nome, tipo, conteudo=None):
-        self.__nome = nome
-        self.__tipo = tipo
-        self.__conteudo = list(conteudo) if conteudo else []
+class ListaPersonalizada:
+    def __init__(self, nome, midias=()):
+        if not isinstance(nome, str) or not nome.strip():
+            raise ValueError("O nome da lista não pode ser vazio.")
+        self.nome = nome.strip()
+        self._midias = []
+        for id_midia in midias:
+            self.adicionar(id_midia)
 
-    def Criar_lista(self):
-        """Cria a lista, garantindo que ela tenha um nome."""
-        if not self.__nome.strip():
-            return "O nome da lista não pode ser vazio."
+    @property
+    def midias(self):
+        return list(self._midias)
 
-        return True
+    def adicionar(self, id_midia):
+        if id_midia in self._midias:
+            raise ValueError(f"A mídia {id_midia} já está na lista '{self.nome}'.")
+        self._midias.append(id_midia)
 
-    def Adicionar_na_lista(self, midia):
-        """Adiciona uma mídia se ela ainda não estiver na lista."""
-        if midia in self.__conteudo:
-            return "Esta mídia já está na lista."
+    def remover(self, id_midia):
+        if id_midia not in self._midias:
+            raise ValueError(f"A mídia {id_midia} não está na lista '{self.nome}'.")
+        self._midias.remove(id_midia)
 
-        self.__conteudo.append(midia)
-        return True
+    def __len__(self):
+        return len(self._midias)
 
-    def Remover_na_lista(self, midia):
-        """Remove uma mídia da lista."""
-        if midia not in self.__conteudo:
-            return "Esta mídia não está na lista."
+    def __contains__(self, id_midia):
+        return id_midia in self._midias
 
-        self.__conteudo.remove(midia)
-        return True
+    def para_dict(self):
+        return {"nome": self.nome, "midias": self.midias}
 
-    def Apagar_lista(self):
-        """Apaga todas as mídias da lista."""
-        self.__conteudo.clear()
-        return True
-
-    def obter_nome(self):
-        return self.__nome
-
-    def obter_tipo(self):
-        return self.__tipo
-
-    def obter_conteudo(self):
-        return self.__conteudo.copy()
+    @classmethod
+    def de_dict(cls, dados):
+        return cls(dados["nome"], dados["midias"])
