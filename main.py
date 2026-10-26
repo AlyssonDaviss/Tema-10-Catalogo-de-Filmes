@@ -80,6 +80,10 @@ def _terminal_comandos(pasta=None):
             continue
         try:
             argumentos = shlex.split(texto, posix=True)
+        except ValueError as erro:
+            print(f"Erro ao interpretar o comando: {erro}")
+            continue
+        try:
             executar(argumentos, pasta)
         except SystemExit:
             # Um comando inválido ou --help não encerra a sessão interativa.

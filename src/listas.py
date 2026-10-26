@@ -2,13 +2,24 @@
 
 
 class ListaPersonalizada:
+    """Lista de IDs de mídias sem duplicatas."""
     def __init__(self, nome, midias=()):
         if not isinstance(nome, str) or not nome.strip():
             raise ValueError("O nome da lista não pode ser vazio.")
-        self.nome = nome.strip()
+        self.nome = nome
         self._midias = []
         for id_midia in midias:
             self.adicionar(id_midia)
+
+    @property
+    def nome(self):
+        return self._nome
+
+    @nome.setter
+    def nome(self, valor):
+        if not isinstance(valor, str) or not valor.strip():
+            raise ValueError("O nome da lista não pode ser vazio.")
+        self._nome = valor.strip()
 
     @property
     def midias(self):

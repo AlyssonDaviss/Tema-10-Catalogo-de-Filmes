@@ -5,12 +5,18 @@ from src.midia import Midia
 
 
 class CadastrarMidia(RepositorioJson):
+    """Persistência e consulta de filmes e séries."""
     def __init__(self, pasta=None):
         super().__init__("midia_dic.json", pasta)
 
     def listar(self):
         """Todas as mídias, ordenadas por ID."""
-        midias = [Midia.de_dict(d) for d in self.carregar().values()]
+        try:
+            midias = [Midia.de_dict(d) for d in self.carregar().values()]
+        except (TypeError, KeyError) as erro:
+            raise ValueError(
+                "midia_dic.json usa um formato incompatível ou contém campos ausentes."
+            ) from erro
         return sorted(midias, key=lambda m: m.id)
 
     def obter(self, id_midia):
@@ -33,10 +39,18 @@ class CadastrarMidia(RepositorioJson):
         return midia
 
     def salvar_midia(self, midia):
-        """Grava as alterações feitas numa mídia já cadastrada."""
+        """Grava alterações e impede duplicidade de título, tipo e ano."""
         dados = self.carregar()
         if str(midia.id) not in dados:
             raise ValueError(f"Mídia {midia.id} não encontrada.")
+        for id_existente, registro in dados.items():
+            if id_existente == str(midia.id):
+                continue
+            existente = Midia.de_dict(registro)
+            if existente.chave == midia.chave:
+                raise ValueError(
+                    f"Já existe {midia.tipo.lower()} '{midia.titulo}' de {midia.ano}."
+                )
         dados[str(midia.id)] = midia.para_dict()
         self.salvar(dados)
 

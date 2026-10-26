@@ -7,6 +7,7 @@ from src.config import Configuracoes
 
 
 class CadastrarConfiguracoes(RepositorioJson):
+    """Persistência das configurações do sistema."""
     def __init__(self, pasta=None):
         super().__init__("settings.json", pasta or RAIZ)
 

@@ -6,6 +6,7 @@ from datetime import datetime
 
 @dataclass(frozen=True)
 class RegistroHistorico:
+    """Registro de uma visualização concluída."""
     midia_id: int
     descricao: str
     minutos: float

@@ -11,6 +11,7 @@ from src.user import Usuario
 
 
 class CadastrarUsuario(RepositorioJson):
+    """Persistência e autenticação de usuários."""
     def __init__(self, pasta=None):
         super().__init__("dados.json", pasta)
         self._listas = CadastrarLista(pasta)

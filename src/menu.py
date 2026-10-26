@@ -33,7 +33,7 @@ def _confirmar(mensagem):
 
 
 def _data_opcional():
-    return input("Data de lançamento AAAA-MM-DD (Enter para pular): ").strip() or None
+    return None
 
 
 def _escolher(titulo, opcoes, saida="Voltar"):
@@ -67,6 +67,7 @@ def _menu(titulo, acoes, saida="Voltar"):
 
 
 class Menu:
+    """Interface guiada por opções numéricas."""
     def __init__(self, cmd):
         self.cmd = cmd
 
@@ -77,8 +78,8 @@ class Menu:
         c = self.cmd
         print(f"\nOlá, {c.usuario.login}! {c.resumo()}.")
         _menu("CATÁLOGO DE FILMES E SÉRIES", [
-            ("Mídias (cadastrar, ver, buscar, avaliar, status)", self.menu_midias),
-            ("Séries (temporadas e episódios)", self.menu_series),
+            ("Ver catálogo", self.ver_catalogo),
+            ("Mídias", self.menu_midias),
             ("Minhas listas e favoritos", self.menu_listas),
             ("Relatórios", self.menu_relatorios),
             ("Configurações e dados de exemplo", self.menu_configuracoes),
@@ -87,13 +88,10 @@ class Menu:
 
     def _identificar(self):
         c = self.cmd
-        if c.usuario and _confirmar(f"Continuar como {c.usuario.login}?"):
+        if c.usuario is not None:
             return True
         for _ in range(3):
             login = _ler_texto("Usuário: ")
-            if not c.usuario_existe(login) and not _confirmar(
-                    f"'{login}' ainda não tem conta. Criar agora?"):
-                continue
             try:
                 novo = c.entrar(login, ler_senha())
             except ValueError as erro:
@@ -148,9 +146,8 @@ class Menu:
     def menu_midias(self):
         _menu("MÍDIAS", [
             ("Cadastrar filme ou série", self.cadastrar),
-            ("Ver catálogo", self.ver_catalogo),
-            ("Buscar por título", self.buscar),
-            ("Avaliar filme ou episódio", self.avaliar),
+            ("Editar filme ou série", self.editar),
+            ("Avaliar filme, série, temporada ou episódio", self.avaliar),
             ("Marcar como assistido / assistindo", self.atualizar_status),
             ("Sugestões para assistir", self.recomendar),
             ("Remover do catálogo", self.remover),
@@ -170,9 +167,37 @@ class Menu:
         if tipo == "filme":
             dados["duracao"] = _ler_numero("Duração em minutos: ", float, 0.01)
         midia = self.cmd.adicionar_midia(tipo, **dados)
+        if tipo == "serie":
+            quantidade_temporadas = _ler_numero("Número de temporadas: ", int, 1)
+            episodios = _ler_texto("Episódios por temporada (ex.: 10,8,8): ")
+            try:
+                quantidades = [int(valor.strip()) for valor in episodios.split(",")]
+            except ValueError:
+                raise ValueError("Informe quantidades inteiras separadas por vírgulas.") from None
+            if len(quantidades) != quantidade_temporadas or any(n <= 0 for n in quantidades):
+                raise ValueError("Informe um número positivo de episódios para cada temporada.")
+            duracao = _ler_numero("Duração média de cada episódio (min): ", float, 0.01)
+            for numero, quantidade in enumerate(quantidades, start=1):
+                self.cmd.adicionar_temporada(midia.id, quantidade, duracao, numero=numero)
         print(f"Cadastrado: {linha(midia)}")
-        if tipo == "serie" and _confirmar("Cadastrar as temporadas agora?"):
-            self._temporadas(midia.id)
+
+    def editar(self):
+        midia = self._escolher_midia()
+        if midia is None:
+            return
+        dados = dict(
+            titulo=_ler_texto(f"Título [{midia.titulo}]: "),
+            genero=_ler_texto(f"Gênero [{midia.genero}]: "),
+            ano=_ler_numero(f"Ano [{midia.ano}]: ", int, 1),
+            classificacao=_ler_texto(f"Classificação [{midia.classificacao}]: "),
+            elenco=input(f"Elenco [{', '.join(midia.elenco)}]: "),
+        )
+        if not dados["elenco"]:
+            dados["elenco"] = ", ".join(midia.elenco)
+        if not isinstance(midia, Serie):
+            dados["duracao"] = _ler_numero(f"Duração em minutos [{midia.duracao:g}]: ", float, 0.01)
+        self.cmd.editar_midia(midia.id, **dados)
+        print(f"Atualizada: {linha(midia)}")
 
     def ver_catalogo(self):
         mostrar([linha(m) for m in self.cmd.listar()] or ["Catálogo vazio."])
@@ -187,8 +212,7 @@ class Menu:
             return
         alvo = (None, None)
         if isinstance(midia, Serie):
-            print("Séries são avaliadas por episódio.")
-            alvo = self._escolher_alvo(midia, so_episodio=True)
+            alvo = self._escolher_alvo(midia)
             if alvo is None:
                 return
         nota = _ler_numero("Nota de 0 a 10: ", float, 0, 10)
@@ -215,7 +239,7 @@ class Menu:
 
     def remover(self):
         midia = self._escolher_midia()
-        if midia and _confirmar(f"Remover '{midia.titulo}' para sempre?"):
+        if midia is not None and _confirmar(f"Remover '{midia.titulo}' para sempre?"):
             self.cmd.remover(midia.id)
             print("Removida.")
 
@@ -229,7 +253,7 @@ class Menu:
 
     def adicionar_temporada(self):
         serie = self._escolher_midia(Serie)
-        if serie:
+        if serie is not None:
             self._temporadas(serie.id)
 
     def _temporadas(self, id_serie):
@@ -258,7 +282,7 @@ class Menu:
 
     def ver_episodios(self):
         serie = self._escolher_midia(Serie)
-        if serie:
+        if serie is not None:
             mostrar(self.cmd.episodios(serie.id))
 
     # -- listas -----------------------------------------------------------------
@@ -279,13 +303,13 @@ class Menu:
 
     def ver_lista(self):
         lista = self._escolher_lista()
-        if lista:
+        if lista is not None:
             mostrar(self.cmd.listas(lista.nome))
 
     def adicionar_na_lista(self):
         lista = self._escolher_lista()
-        midia = lista and self._escolher_midia()
-        if midia:
+        midia = self._escolher_midia() if lista is not None else None
+        if midia is not None:
             self.cmd.adicionar_na_lista(lista.nome, midia.id)
             print(f"Adicionada à lista '{lista.nome}'.")
 
@@ -301,13 +325,13 @@ class Menu:
 
     def adicionar_favorito(self):
         midia = self._escolher_midia()
-        if midia:
+        if midia is not None:
             self.cmd.adicionar_favorito(midia.id)
             print("Adicionada aos favoritos.")
 
     def apagar_lista(self):
         lista = self._escolher_lista()
-        if lista and _confirmar(f"Apagar a lista '{lista.nome}'?"):
+        if lista is not None and _confirmar(f"Apagar a lista '{lista.nome}'?"):
             self.cmd.apagar_lista(lista.nome)
             print("Lista apagada.")
 
@@ -316,16 +340,18 @@ class Menu:
         def ver(qual, por=None):
             return lambda: mostrar(self.cmd.relatorio(qual, por))
 
+        def resumo_tempo():
+            mostrar(self.cmd.relatorio("geral"))
+            mostrar(self.cmd.relatorio("tempo"))
+            mostrar(["Por semana:", *self.cmd.relatorio("periodo", "semana")])
+            mostrar(["Por mês:", *self.cmd.relatorio("periodo", "mes")])
+
         _menu("RELATÓRIOS", [
-            ("Resumo geral", ver("geral")),
-            ("Top 10 mais bem avaliados", ver("top")),
-            ("Média de notas por gênero", ver("notas", "genero")),
-            ("Média de notas por tipo (filme/série)", ver("notas", "tipo")),
-            ("Tempo assistido por tipo", ver("tempo")),
+            ("Resumo e tempo assistido", resumo_tempo),
+            ("Top 10", ver("top")),
+            ("Notas por gênero", ver("notas", "genero")),
             ("Séries com mais episódios assistidos", ver("series")),
-            ("Tempo assistido por semana", ver("periodo", "semana")),
-            ("Tempo assistido por mês", ver("periodo", "mes")),
-            ("Histórico de visualização", ver("historico")),
+            ("Histórico", ver("historico")),
         ])
 
     # -- configurações -------------------------------------------------------------
@@ -343,9 +369,7 @@ class Menu:
             ("Limite de listas por usuário", alterar("limite_listas", "Limite de listas")),
             ("Multiplicador de duração (minutos → horas)",
              alterar("multiplicador_duracao", "Multiplicador")),
-            ("Casas decimais das horas", alterar("casas_decimais", "Casas decimais")),
-            ("Carregar filmes e séries de exemplo", self.carregar_exemplos),
-            ("Sair da conta", self.sair_da_conta),
+                        ("Carregar filmes e séries de exemplo", self.carregar_exemplos),
         ])
 
     def carregar_exemplos(self):

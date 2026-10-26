@@ -9,6 +9,7 @@ PASTA_DATA = RAIZ / "data"
 
 
 class RepositorioJson:
+    """Persistência comum baseada em arquivos JSON."""
     def __init__(self, arquivo, pasta=None):
         self.caminho = Path(pasta or PASTA_DATA) / arquivo
 

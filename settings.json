@@ -1,6 +1,5 @@
 {
-    "nota_minima_recomendado": 7.0,
+    "nota_minima_recomendado": 6.0,
     "limite_listas": 10,
-    "multiplicador_duracao": 0.016666666666666666,
-    "casas_decimais": 2
+    "multiplicador_duracao": 0.016666666666666666
 }

@@ -5,6 +5,7 @@ from src.historico import RegistroHistorico
 
 
 class CadastrarHistorico(RepositorioJson):
+    """Persistência do histórico por usuário."""
     def __init__(self, pasta=None):
         super().__init__("historico.json", pasta)
 

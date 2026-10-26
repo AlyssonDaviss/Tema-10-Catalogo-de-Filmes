@@ -7,6 +7,7 @@ from src.listas import ListaPersonalizada
 
 
 class Usuario:
+    """Representa uma conta com listas e histórico de visualização."""
     FAVORITOS = "Favoritos"
 
     def __init__(self, login, senha, id=None):
@@ -87,3 +88,12 @@ class Usuario:
         self.adicionar_registro(
             RegistroHistorico(id_midia, descricao, minutos, quando or datetime.now())
         )
+
+    def remover_registros(self, id_midia, descricoes=None):
+        """Remove do histórico a mídia inteira ou os itens indicados dela."""
+        descricoes = None if descricoes is None else set(descricoes)
+        self._historico = [
+            registro for registro in self._historico
+            if registro.midia_id != id_midia
+            or (descricoes is not None and registro.descricao not in descricoes)
+        ]

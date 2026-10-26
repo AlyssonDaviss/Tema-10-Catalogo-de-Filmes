@@ -4,6 +4,7 @@ from repositories.base import RepositorioJson
 
 
 class CadastrarSessao(RepositorioJson):
+    """Persistência da sessão ativa."""
     def __init__(self, pasta=None):
         super().__init__("sessao.json", pasta)
 

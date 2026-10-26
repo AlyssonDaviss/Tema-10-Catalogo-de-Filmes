@@ -5,6 +5,7 @@ from src.listas import ListaPersonalizada
 
 
 class CadastrarLista(RepositorioJson):
+    """Persistência de listas por usuário."""
     def __init__(self, pasta=None):
         super().__init__("listas.json", pasta)
 

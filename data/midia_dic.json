@@ -274,5 +274,73 @@
         "duracao": 120.0,
         "status": "ASSISTIDO",
         "nota": 7.0
+    },
+    "10": {
+        "id": 10,
+        "tipo": "FILME",
+        "titulo": "Titulo",
+        "genero": "Genero",
+        "ano": 2026,
+        "classificacao": "L",
+        "elenco": [],
+        "duracao": 120.0,
+        "status": "NÃO ASSISTIDO",
+        "nota": null
+    },
+    "11": {
+        "id": 11,
+        "tipo": "SERIE",
+        "titulo": "SerieA",
+        "genero": "teste",
+        "ano": 2026,
+        "classificacao": "L",
+        "elenco": [],
+        "temporadas": [
+            {
+                "numero": 1,
+                "episodios": [
+                    {
+                        "numero": 1,
+                        "titulo": "Episódio 1",
+                        "duracao": 24.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": 10.0
+                    },
+                    {
+                        "numero": 2,
+                        "titulo": "Episódio 2",
+                        "duracao": 24.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": null
+                    }
+                ]
+            }
+        ]
+    },
+    "12": {
+        "id": 12,
+        "tipo": "SERIE",
+        "titulo": "serieB",
+        "genero": "2026",
+        "ano": 2030,
+        "classificacao": "L",
+        "elenco": [],
+        "temporadas": [
+            {
+                "numero": 1,
+                "episodios": [
+                    {
+                        "numero": 1,
+                        "titulo": "Episódio 1",
+                        "duracao": 24.0,
+                        "data_lancamento": null,
+                        "status": "ASSISTIDO",
+                        "nota": null
+                    }
+                ]
+            }
+        ]
     }
 }

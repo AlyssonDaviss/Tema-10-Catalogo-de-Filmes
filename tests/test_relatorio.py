@@ -81,9 +81,9 @@ def test_nota_geral_do_catalogo():
 
 def test_relatorios_com_dados_do_seed(tmp_path):
     repositorio, usuario = CadastrarMidia(tmp_path), Usuario("ana", "1")
-    assert popular(repositorio, usuario, agora=datetime(2026, 10, 25)) == 8
+    assert popular(repositorio, usuario, agora=datetime(2026, 10, 25)) == 3
     midias = repositorio.listar()
-    assert len(relatorio.top(midias, 10)) == 5
-    assert relatorio.series_mais_assistidas(midias)[0][0].titulo == "Breaking Bad"
-    assert len(usuario.historico) == 15
+    assert len(midias) == 3
+    assert all(m.nota_media is None for m in midias)
+    assert usuario.historico == []
     assert popular(repositorio, usuario) == 0  # idempotente

@@ -104,7 +104,7 @@ def test_filtros_do_listar(cli):
     cli("usuario", "entrar", "ana", "--senha", "1")
     cli("exemplos")
     assert len(cli("midia", "listar", "--busca", "matr")[1].splitlines()) == 1
-    assert len(cli("midia", "listar", "--status", "nao assistido")[1].splitlines()) == 1
+    assert len(cli("midia", "listar", "--status", "nao assistido")[1].splitlines()) == 3
     assert "Nenhuma mídia" in cli("midia", "listar", "--genero", "Terror")[1]
 
 
@@ -113,3 +113,25 @@ def test_ajuda_lista_os_grupos(capsys):
         executar(["-h"])
     saida = capsys.readouterr().out
     assert "midia" in saida and "serie" in saida and "usuario" in saida and "exemplos:" in saida
+
+
+def test_voltar_para_nao_assistido_limpa_historico_e_periodo(cli):
+    cli("usuario", "entrar", "ana", "--senha", "1")
+    cli(*FILME)
+    cli("midia", "atualizar-status", 1, "assistido")
+    assert "Matrix" in cli("usuario", "historico")[1]
+    cli("midia", "atualizar-status", 1, "nao assistido")
+    assert "Histórico vazio" in cli("usuario", "historico")[1]
+    assert "Nenhuma conclusão" in cli("midia", "relatorio", "periodo", "--por", "mes")[2] or \
+           "Nenhuma conclusão" in cli("midia", "relatorio", "periodo", "--por", "mes")[1]
+
+
+def test_editar_midia_rejeita_duplicidade(tmp_path):
+    from src.comandos import Comandos
+
+    cmd = Comandos(tmp_path)
+    a = cmd.adicionar_midia("filme", "Matrix", "Ficção", 1999, "14", "Elenco", 136)
+    cmd.adicionar_midia("filme", "Outro", "Drama", 2000, "12", "Elenco", 100)
+    with pytest.raises(ValueError, match="Já existe"):
+        cmd.editar_midia(2, titulo=a.titulo, genero="Ficção", ano=1999,
+                         classificacao="14", elenco="Elenco", duracao=136)

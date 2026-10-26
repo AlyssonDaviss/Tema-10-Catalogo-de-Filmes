@@ -27,8 +27,8 @@ def abrir(pasta):
     Menu(Comandos(pasta)).iniciar()
 
 
-def test_login_cria_conta_nova_apos_confirmacao(tmp_path, monkeypatch, capsys):
-    digitar(monkeypatch, "bia", "s", "senha", "0")      # usuário, confirmar conta, senha, sair
+def test_login_cria_conta_nova_sem_confirmacao(tmp_path, monkeypatch, capsys):
+    digitar(monkeypatch, "bia", "senha", "0")
     abrir(tmp_path)
     assert CadastrarUsuario(tmp_path).obter_id("bia") == "0001"
     assert "Conta criada" in capsys.readouterr().out
@@ -43,11 +43,8 @@ def test_senha_errada_pede_novamente(pasta, monkeypatch, capsys):
 
 def test_cadastrar_filme_avaliar_e_marcar_assistido(pasta, monkeypatch):
     digitar(monkeypatch, "ana", "123",
-            "1",                                                              # Mídias
-            "1", "1", "Matrix", "Ficção", "1999", "14", "Keanu Reeves", "136",  # cadastrar filme
-            "4", "1", "9,5",                                                  # avaliar o ID 1
-            "5", "1", "3",                                                    # status: Assistido
-            "0", "0")
+            "2", "1", "1", "Matrix", "Ficção", "1999", "14", "Keanu Reeves", "136",
+            "3", "1", "9,5", "4", "1", "3", "0", "0")
     abrir(pasta)
     filme = CadastrarMidia(pasta).obter(1)
     assert filme.nota == 9.5 and filme.finalizada
@@ -56,10 +53,8 @@ def test_cadastrar_filme_avaliar_e_marcar_assistido(pasta, monkeypatch):
 
 def test_serie_com_temporada_automatica_e_status_por_episodio(pasta, monkeypatch):
     digitar(monkeypatch, "ana", "123",
-            "1",
-            "1", "2", "Dark", "Ficção", "2017", "16", "", "s", "3", "50", "", "n",  # série + T1 (3 eps)
-            "5", "1", "3", "1", "1", "3",     # status: um episódio (T1E1) -> Assistido
-            "0", "0")
+            "2", "1", "2", "Dark", "Ficção", "2017", "16", "", "1", "3", "50",
+            "4", "1", "3", "1", "1", "3", "0", "0")
     abrir(pasta)
     serie = CadastrarMidia(pasta).obter(1)
     assert len(serie) == 3 and serie.status.value == "ASSISTINDO"
@@ -68,15 +63,14 @@ def test_serie_com_temporada_automatica_e_status_por_episodio(pasta, monkeypatch
 def test_erro_de_regra_nao_fecha_o_menu(pasta, monkeypatch, capsys):
     CadastrarMidia(pasta).cadastrar(Filme("A", "B", 2000, "L", "", 90))
     digitar(monkeypatch, "ana", "123",
-            "1", "1", "1", "a", "B", "2000", "L", "", "90",   # mesmo título/ano: duplicado
-            "0", "0")
+            "2", "1", "1", "a", "B", "2000", "L", "", "90", "0", "0")
     abrir(pasta)
     assert "Já existe" in capsys.readouterr().out
 
 
 def test_listas_pelo_menu(pasta, monkeypatch):
     digitar(monkeypatch, "ana", "123",
-            "5", "6", "0",                       # Configurações > carregar exemplos
+            "5", "5", "0",                       # Configurações > carregar exemplos
             "3", "3", "Maratona", "0",           # Listas > criar
             "0")
     abrir(pasta)
@@ -85,6 +79,6 @@ def test_listas_pelo_menu(pasta, monkeypatch):
 
 def test_continuar_com_a_sessao_existente(pasta, monkeypatch, capsys):
     Comandos(pasta).entrar("ana", "123")
-    digitar(monkeypatch, "s", "0")               # "Continuar como ana?" sim, sair
+    digitar(monkeypatch, "0")               # sessão existente, sair
     abrir(pasta)
     assert "Olá, ana" in capsys.readouterr().out

@@ -43,6 +43,7 @@ def _inteiro_positivo(valor, nome):
 
 
 class Status(Enum):
+    """Estados de visualização de um filme ou episódio."""
     NAO_ASSISTIDO = "NÃO ASSISTIDO"
     ASSISTINDO = "ASSISTINDO"
     ASSISTIDO = "ASSISTIDO"
@@ -272,6 +273,7 @@ class Midia(ABC):
 # Filme
 # --------------------------------------------------------------------------
 class Filme(ItemAssistivel, Midia):
+    """Representa um filme com duração, status e nota."""
     TIPO = "FILME"
 
     def __init__(
@@ -328,6 +330,7 @@ class Filme(ItemAssistivel, Midia):
 # Episodio, Temporada e Serie
 # --------------------------------------------------------------------------
 class Episodio(ItemAssistivel):
+    """Representa um episódio dentro de uma temporada."""
     def __init__(
         self, temporada, numero, titulo, duracao, data_lancamento=None,
         status=Status.NAO_ASSISTIDO, nota=None,
@@ -406,6 +409,7 @@ class Episodio(ItemAssistivel):
 
 
 class Temporada:
+    """Agrupa episódios de uma série."""
     def __init__(self, numero):
         self.numero = numero
         self._episodios = {}
@@ -458,6 +462,7 @@ class Temporada:
 
 
 class Serie(Midia):
+    """Representa uma série composta por temporadas e episódios."""
     TIPO = "SERIE"
 
     def __init__(self, titulo, genero, ano, classificacao, elenco=(), id=None):
@@ -540,9 +545,9 @@ class Serie(Midia):
         return concluidos
 
     def avaliar(self, nota, temporada=None, episodio=None):
-        if temporada is None or episodio is None:
-            raise ValueError("Para avaliar uma série informe temporada e episódio.")
-        self.temporada(temporada).episodio(episodio).nota = nota
+        """Aplica a nota ao episódio, à temporada ou à série inteira."""
+        for ep in self._alvo(temporada, episodio):
+            ep.nota = nota
 
     def _alvo(self, temporada, episodio):
         if temporada is None:

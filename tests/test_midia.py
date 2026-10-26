@@ -88,7 +88,7 @@ def test_criar_temporada_invalida_nao_deixa_lixo():
 
 
 def test_episodio_duplicado_e_rejeitado():
-    s = serie()
+    s = serie(episodios=2)
     with pytest.raises(ValueError, match="já existe"):
         s.adicionar_episodio(Episodio(1, 1, "Outro", 30))
 
@@ -105,7 +105,7 @@ def test_serie_vira_assistida_quando_todos_os_episodios_forem():
 
 
 def test_nota_media_da_serie_vem_dos_episodios_avaliados():
-    s = serie()
+    s = serie(episodios=2)
     assert s.nota_media is None
     s.avaliar(9, 1, 1)
     s.avaliar("8,0", 1, 2)
@@ -119,15 +119,16 @@ def test_definir_status_so_devolve_o_que_acabou_de_ser_concluido():
     assert s.minutos_assistidos == 150
 
 
-def test_filme_nao_aceita_temporada_e_serie_exige_episodio_para_avaliar():
+def test_filme_nao_aceita_temporada_e_serie_avalia_escopos():
     with pytest.raises(ValueError):
         filme().avaliar(8, temporada=1)
-    with pytest.raises(ValueError):
-        serie().avaliar(8)
+    s = serie(episodios=2)
+    s.avaliar(8)
+    assert [ep.nota for ep in s.episodios] == [8, 8]
 
 
 def test_temporada_ou_episodio_inexistente():
-    s = serie()
+    s = serie(episodios=2)
     with pytest.raises(ValueError):
         s.definir_status("ASSISTIDO", 9)
     with pytest.raises(ValueError):
@@ -137,7 +138,7 @@ def test_temporada_ou_episodio_inexistente():
 # -- serialização ---------------------------------------------------------------
 def test_dict_ida_e_volta_preserva_filme_e_serie():
     f = filme(status="ASSISTIDO", nota=9)
-    s = serie()
+    s = serie(episodios=2)
     s.definir_status("ASSISTIDO", 1, 1)
     s.avaliar(7.5, 1, 1)
     for original in (f, s):

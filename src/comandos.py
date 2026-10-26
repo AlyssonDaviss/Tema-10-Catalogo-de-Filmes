@@ -34,6 +34,7 @@ def ler_senha(mensagem="Senha: "):
 
 
 class Comandos:
+    """Operações do sistema sem interação com a tela."""
     def __init__(self, pasta=None, id_usuario=None):
         self.midias = CadastrarMidia(pasta)
         self.pessoas = CadastrarUsuario(pasta)
@@ -116,10 +117,36 @@ class Comandos:
         """Muda o status; cada filme/episódio concluído agora entra no histórico."""
         usuario = self._exigir_usuario()
         midia = self.midias.obter(id_midia)
-        for descricao, minutos in midia.definir_status(status, temporada, episodio):
+        novo_status = Status.converter(status)
+        if isinstance(midia, Serie):
+            itens = midia._alvo(temporada, episodio)
+            descricoes = [f"{midia.titulo} T{ep.temporada}E{ep.numero}" for ep in itens]
+        else:
+            itens = [midia]
+            descricoes = [midia.titulo]
+        for descricao, minutos in midia.definir_status(novo_status, temporada, episodio):
             usuario.registrar_conclusao(midia.id, descricao, minutos)
+        if novo_status is not Status.ASSISTIDO:
+            usuario.remover_registros(midia.id, descricoes)
         self.midias.salvar_midia(midia)
         self._salvar_usuario()
+        return midia
+
+    def editar_midia(self, id_midia, *, titulo, genero, ano, classificacao, elenco, duracao=None):
+        """Atualiza os dados editáveis de uma mídia, revalidando duplicidade."""
+        midia = self.midias.obter(id_midia)
+        midia.titulo = titulo
+        midia.genero = genero
+        midia.ano = ano
+        midia.classificacao = classificacao
+        midia.elenco = elenco
+        if isinstance(midia, Filme):
+            if duracao is None:
+                raise ValueError("Filmes exigem a duração em minutos.")
+            midia.duracao = duracao
+        elif duracao is not None:
+            raise ValueError("Séries não têm duração própria: ela vem dos episódios.")
+        self.midias.salvar_midia(midia)
         return midia
 
     def remover(self, id_midia):
