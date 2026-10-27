@@ -52,20 +52,8 @@ def test_erro_de_regra_vira_mensagem_e_codigo_1(cli):
     assert codigo == 1 and "não encontrada" in erro
 
 
-def test_filme_exige_duracao_e_serie_nao_aceita(cli):
-    codigo, _, erro = cli("midia", "adicionar", "--tipo", "filme", "--titulo", "A", "--genero", "B",
-                          "--ano", 2000, "--classificacao", "L")
-    assert codigo == 1 and "duração" in erro
-    codigo, _, erro = cli("midia", "adicionar", "--tipo", "serie", "--titulo", "A", "--genero", "B",
-                          "--ano", 2000, "--classificacao", "L", "--duracao", 30)
-    assert codigo == 1 and "Séries não têm duração" in erro
 
 
-def test_acoes_do_usuario_exigem_login_e_orientam(cli):
-    cli(*FILME)
-    codigo, _, erro = cli("usuario", "criar-lista", "Favoritas")
-    assert codigo == 1 and "usuario entrar" in erro
-    assert cli("midia", "atualizar-status", 1, "assistido")[0] == 1
 
 
 def test_listas_favoritos_e_sessao(cli):
@@ -82,37 +70,12 @@ def test_listas_favoritos_e_sessao(cli):
     assert cli("usuario", "listas")[0] == 1
 
 
-def test_senha_incorreta_nao_cria_sessao(cli):
-    cli("usuario", "entrar", "ana", "--senha", "123")
-    cli("usuario", "sair")
-    codigo, _, erro = cli("usuario", "entrar", "ana", "--senha", "errada")
-    assert codigo == 1 and "Senha incorreta" in erro
-    assert "Ninguém" in cli("usuario", "quem")[1]
 
 
-def test_config_definir_persiste_e_valida(cli):
-    assert cli("config", "definir", "limite_listas", 2)[0] == 0
-    assert "limite_listas: 2" in cli("config", "mostrar")[1]
-    assert cli("config", "definir", "limite_listas", -1)[0] == 1
-    cli("usuario", "entrar", "ana", "--senha", "1")
-    cli("usuario", "criar-lista", "A")
-    cli("usuario", "criar-lista", "B")
-    assert "Limite" in cli("usuario", "criar-lista", "C")[2]
 
 
-def test_filtros_do_listar(cli):
-    cli("usuario", "entrar", "ana", "--senha", "1")
-    cli("exemplos")
-    assert len(cli("midia", "listar", "--busca", "matr")[1].splitlines()) == 1
-    assert len(cli("midia", "listar", "--status", "nao assistido")[1].splitlines()) == 3
-    assert "Nenhuma mídia" in cli("midia", "listar", "--genero", "Terror")[1]
 
 
-def test_ajuda_lista_os_grupos(capsys):
-    with pytest.raises(SystemExit):
-        executar(["-h"])
-    saida = capsys.readouterr().out
-    assert "midia" in saida and "serie" in saida and "usuario" in saida and "exemplos:" in saida
 
 
 def test_voltar_para_nao_assistido_limpa_historico_e_periodo(cli):

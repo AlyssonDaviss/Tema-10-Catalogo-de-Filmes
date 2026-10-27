@@ -1,0 +1,2 @@
+# Necessário apenas para executar os testes automatizados.
+pytest>=7.0

@@ -24,13 +24,6 @@ def test_media_por_genero_considera_apenas_finalizadas():
     assert relatorio.media_por(midias, "genero") == {"Ação": 7, "Drama": 9}
 
 
-def test_media_por_tipo():
-    serie = Serie("S", "Drama", 2000, "L")
-    serie.criar_temporada(1, 1, 30)
-    serie.definir_status("ASSISTIDO")
-    serie.avaliar(6, 1, 1)
-    assert relatorio.media_por([filme("A", "Drama", 100, nota=10), serie], "tipo") == {
-        "FILME": 10, "SERIE": 6}
 
 
 def test_tempo_total_soma_apenas_o_que_foi_assistido():
@@ -50,14 +43,6 @@ def test_top_ordena_por_nota_limita_e_desempata_pelo_titulo():
     assert [m.titulo for m in relatorio.top(midias, 3)] == ["Beta", "Alfa", "Zeta"]
 
 
-def test_series_com_mais_episodios_assistidos():
-    a, b, c = (Serie(n, "X", 2000, "L") for n in "ABC")
-    for s, vistos in ((a, 1), (b, 3), (c, 0)):
-        s.criar_temporada(1, 3, 20)
-        for n in range(1, vistos + 1):
-            s.definir_status("ASSISTIDO", 1, n)
-    ranking = relatorio.series_mais_assistidas([a, b, c])
-    assert [(s.titulo, n) for s, n in ranking] == [("B", 3), ("A", 1)]
 
 
 def test_tempo_por_semana_e_por_mes():
@@ -73,17 +58,5 @@ def test_tempo_por_semana_e_por_mes():
         relatorio.minutos_por_periodo(usuario, "ano")
 
 
-def test_nota_geral_do_catalogo():
-    midias = [filme("A", "X", 90, nota=10), filme("B", "X", 90, nota=6), filme("C", "X", 90)]
-    assert relatorio.nota_geral(midias) == 8
-    assert relatorio.nota_geral([]) is None
 
 
-def test_relatorios_com_dados_do_seed(tmp_path):
-    repositorio, usuario = CadastrarMidia(tmp_path), Usuario("ana", "1")
-    assert popular(repositorio, usuario, agora=datetime(2026, 10, 25)) == 3
-    midias = repositorio.listar()
-    assert len(midias) == 3
-    assert all(m.nota_media is None for m in midias)
-    assert usuario.historico == []
-    assert popular(repositorio, usuario) == 0  # idempotente

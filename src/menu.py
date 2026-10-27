@@ -1,6 +1,6 @@
 """Menu interativo: perguntas passo a passo sobre a mesma lógica dos subcomandos."""
 
-from src.comandos import Comandos, ler_senha, linha, mostrar
+from src.comandos import Comandos, ler_senha, linha, mostrar, mostrar_mensagem
 from src.midia import Serie, Status
 
 
@@ -41,10 +41,11 @@ def _escolher(titulo, opcoes, saida="Voltar"):
     if not opcoes:
         print("Nada para escolher aqui ainda.")
         return None
+    # Deixa o início de cada tela fácil de localizar.
     print(f"\n=== {titulo} ===")
     for numero, (_, rotulo) in enumerate(opcoes, start=1):
         print(f"  {numero}. {rotulo}")
-    print(f"  0. {saida}")
+    print(f"  0. {saida}\n")
     while True:
         escolha = input("Escolha uma opção: ").strip()
         if escolha == "0":
@@ -63,7 +64,7 @@ def _menu(titulo, acoes, saida="Voltar"):
         try:
             acao()
         except ValueError as erro:
-            print(f"Não foi possível: {erro}")
+            mostrar_mensagem(f"Não foi possível: {erro}")
 
 
 class Menu:
@@ -73,10 +74,11 @@ class Menu:
 
     # -- início ---------------------------------------------------------------
     def iniciar(self):
+        # O login é feito antes de mostrar as opções que dependem do usuário.
         if not self._identificar():
             return
         c = self.cmd
-        print(f"\nOlá, {c.usuario.login}! {c.resumo()}.")
+        mostrar_mensagem(f"Olá, {c.usuario.login}! {c.resumo()}.")
         _menu("CATÁLOGO DE FILMES E SÉRIES", [
             ("Ver catálogo", self.ver_catalogo),
             ("Mídias", self.menu_midias),
@@ -84,7 +86,7 @@ class Menu:
             ("Relatórios", self.menu_relatorios),
             ("Configurações e dados de exemplo", self.menu_configuracoes),
         ], saida="Sair")
-        print("Até logo!")
+        mostrar_mensagem("Até logo!")
 
     def _identificar(self):
         c = self.cmd
@@ -97,13 +99,14 @@ class Menu:
             except ValueError as erro:
                 print(erro)
                 continue
-            print("Conta criada. Bem-vindo!" if novo else "Login realizado.")
+            mostrar_mensagem("Conta criada. Bem-vindo!" if novo else "Login realizado.")
             return True
         print("Não foi possível entrar.")
         return False
 
     # -- seleção ----------------------------------------------------------------
     def _escolher_midia(self, classe=None):
+        # Guardamos as mídias por ID para validar a escolha sem procurar de novo.
         midias = [m for m in self.cmd.midias.listar() if classe is None or isinstance(m, classe)]
         if not midias:
             print("Nenhuma mídia disponível. Cadastre uma primeiro.")
@@ -179,7 +182,7 @@ class Menu:
             duracao = _ler_numero("Duração média de cada episódio (min): ", float, 0.01)
             for numero, quantidade in enumerate(quantidades, start=1):
                 self.cmd.adicionar_temporada(midia.id, quantidade, duracao, numero=numero)
-        print(f"Cadastrado: {linha(midia)}")
+        mostrar_mensagem(f"Cadastrado: {linha(midia)}")
 
     def editar(self):
         midia = self._escolher_midia()
@@ -197,7 +200,7 @@ class Menu:
         if not isinstance(midia, Serie):
             dados["duracao"] = _ler_numero(f"Duração em minutos [{midia.duracao:g}]: ", float, 0.01)
         self.cmd.editar_midia(midia.id, **dados)
-        print(f"Atualizada: {linha(midia)}")
+        mostrar_mensagem(f"Atualizada: {linha(midia)}")
 
     def ver_catalogo(self):
         mostrar([linha(m) for m in self.cmd.listar()] or ["Catálogo vazio."])
@@ -216,7 +219,7 @@ class Menu:
             if alvo is None:
                 return
         nota = _ler_numero("Nota de 0 a 10: ", float, 0, 10)
-        print(f"Avaliação registrada: {linha(self.cmd.avaliar(midia.id, nota, *alvo))}")
+        mostrar_mensagem(f"Avaliação registrada: {linha(self.cmd.avaliar(midia.id, nota, *alvo))}")
 
     def atualizar_status(self):
         midia = self._escolher_midia()
@@ -229,19 +232,19 @@ class Menu:
                 return
         status = _escolher("NOVO STATUS", [(s, s.value.capitalize()) for s in Status])
         if status is not None:
-            print(f"Atualizado: {linha(self.cmd.atualizar_status(midia.id, status, *alvo))}")
+            mostrar_mensagem(f"Atualizado: {linha(self.cmd.atualizar_status(midia.id, status, *alvo))}")
 
     def recomendar(self):
         sugestoes = self.cmd.recomendar()
         minimo = self.cmd.config.nota_minima_recomendado
-        print(f"Sugestões com nota média a partir de {minimo:g}:")
+        mostrar_mensagem(f"Sugestões com nota média a partir de {minimo:g}:")
         mostrar([linha(m) for m in sugestoes] or ["Ainda não há mídias avaliadas com essa nota."])
 
     def remover(self):
         midia = self._escolher_midia()
         if midia is not None and _confirmar(f"Remover '{midia.titulo}' para sempre?"):
             self.cmd.remover(midia.id)
-            print("Removida.")
+            mostrar_mensagem("Removida.")
 
     # -- séries -----------------------------------------------------------------
     def menu_series(self):
@@ -262,7 +265,7 @@ class Menu:
             duracao = _ler_numero("Duração média de cada episódio (min): ", float, 0.01)
             serie, numero = self.cmd.adicionar_temporada(id_serie, quantidade, duracao,
                                                          _data_opcional())
-            print(f"Temporada {numero} criada com {quantidade} episódios.")
+            mostrar_mensagem(f"Temporada {numero} criada com {quantidade} episódios.")
             if not _confirmar("Adicionar mais uma temporada?"):
                 return
 
@@ -278,7 +281,7 @@ class Menu:
             _ler_numero("Duração (min): ", float, 0.01),
             _data_opcional(),
         )
-        print("Episódio adicionado.")
+        mostrar_mensagem("Episódio adicionado.")
 
     def ver_episodios(self):
         serie = self._escolher_midia(Serie)
@@ -299,7 +302,7 @@ class Menu:
         ])
 
     def criar_lista(self):
-        print(f"Lista criada: {self.cmd.criar_lista(_ler_texto('Nome da lista: ')).nome}")
+        mostrar_mensagem(f"Lista criada: {self.cmd.criar_lista(_ler_texto('Nome da lista: ')).nome}")
 
     def ver_lista(self):
         lista = self._escolher_lista()
@@ -311,7 +314,7 @@ class Menu:
         midia = self._escolher_midia() if lista is not None else None
         if midia is not None:
             self.cmd.adicionar_na_lista(lista.nome, midia.id)
-            print(f"Adicionada à lista '{lista.nome}'.")
+            mostrar_mensagem(f"Adicionada à lista '{lista.nome}'.")
 
     def remover_da_lista(self):
         lista = self._escolher_lista()
@@ -321,19 +324,19 @@ class Menu:
         id_midia = _ler_numero("ID da mídia a remover (0 para cancelar): ", int, 0)
         if id_midia:
             self.cmd.remover_da_lista(lista.nome, id_midia)
-            print(f"Removida da lista '{lista.nome}'.")
+            mostrar_mensagem(f"Removida da lista '{lista.nome}'.")
 
     def adicionar_favorito(self):
         midia = self._escolher_midia()
         if midia is not None:
             self.cmd.adicionar_favorito(midia.id)
-            print("Adicionada aos favoritos.")
+            mostrar_mensagem("Adicionada aos favoritos.")
 
     def apagar_lista(self):
         lista = self._escolher_lista()
         if lista is not None and _confirmar(f"Apagar a lista '{lista.nome}'?"):
             self.cmd.apagar_lista(lista.nome)
-            print("Lista apagada.")
+            mostrar_mensagem("Lista apagada.")
 
     # -- relatórios ---------------------------------------------------------------
     def menu_relatorios(self):
@@ -360,7 +363,7 @@ class Menu:
             def acao():
                 print(f"{rotulo} (atual: {getattr(self.cmd.config, chave)})")
                 self.cmd.definir_config(chave, _ler_texto("Novo valor: "))
-                print("Configuração salva.")
+                mostrar_mensagem("Configuração salva.")
             return acao
 
         _menu("CONFIGURAÇÕES", [
@@ -373,7 +376,7 @@ class Menu:
         ])
 
     def carregar_exemplos(self):
-        print(f"{self.cmd.carregar_exemplos()} mídia(s) de exemplo cadastrada(s).")
+        mostrar_mensagem(f"{self.cmd.carregar_exemplos()} mídia(s) de exemplo cadastrada(s).")
 
     def sair_da_conta(self):
         self.cmd.sair()

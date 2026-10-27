@@ -24,7 +24,13 @@ def linha(midia):
 
 
 def mostrar(linhas):
-    print("\n".join(linhas))
+    # Cada listagem é exibida como um bloco, separado do texto anterior e seguinte.
+    print("\n" + "\n".join(linhas) + "\n")
+
+
+def mostrar_mensagem(mensagem):
+    """Exibe uma resposta completa com espaço visual ao redor."""
+    print(f"\n{mensagem}\n")
 
 
 def ler_senha(mensagem="Senha: "):

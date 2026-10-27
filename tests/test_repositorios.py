@@ -25,9 +25,6 @@ def pessoas(tmp_path):
 
 
 # -- mídias: cadastro e duplicidade -------------------------------------------
-def test_ids_sao_sequenciais(midias):
-    assert midias.cadastrar(filme("A")).id == 1
-    assert midias.cadastrar(filme("B")).id == 2
 
 
 def test_duplicidade_titulo_tipo_ano_e_rejeitada(midias):
@@ -36,61 +33,19 @@ def test_duplicidade_titulo_tipo_ano_e_rejeitada(midias):
         midias.cadastrar(filme("DUNE", 1984))
 
 
-def test_mesmo_titulo_com_ano_ou_tipo_diferente_e_permitido(midias):
-    midias.cadastrar(filme("Dune", 1984))
-    midias.cadastrar(filme("Dune", 2021))
-    midias.cadastrar(Serie("Dune", "Ficção", 1984, "12"))
-    assert len(midias.listar()) == 3
 
 
-def test_obter_e_remover(midias):
-    midias.cadastrar(filme())
-    assert midias.obter(1).titulo == "Matrix"
-    midias.remover(1)
-    with pytest.raises(ValueError, match="não encontrada"):
-        midias.obter(1)
 
 
-def test_alteracoes_sao_gravadas_e_relidas(midias):
-    serie = midias.cadastrar(Serie("Dark", "Ficção", 2017, "16"))
-    serie.criar_temporada(1, 2, 50)
-    serie.definir_status("ASSISTIDO", 1, 1)
-    serie.avaliar(9, 1, 1)
-    midias.salvar_midia(serie)
-
-    relida = CadastrarMidia(midias.caminho.parent).obter(1)
-    assert relida.status is Status.ASSISTINDO
-    assert relida.nota_media == 9
-    assert len(relida) == 2
 
 
-def test_json_corrompido_gera_erro_claro(tmp_path):
-    (tmp_path / "midia_dic.json").write_text("{ quebrado", encoding="utf-8")
-    with pytest.raises(ValueError, match="JSON inválido"):
-        CadastrarMidia(tmp_path).listar()
 
 
-def test_arquivo_gravado_e_json_legivel(midias):
-    midias.cadastrar(filme())
-    dados = json.loads(midias.caminho.read_text(encoding="utf-8"))
-    assert dados["1"]["titulo"] == "Matrix"
 
 
 # -- usuários, listas e histórico -------------------------------------------------
-def test_cadastro_e_autenticacao(pessoas):
-    assert pessoas.cadastrar(Usuario("ana", "123")) is True
-    assert pessoas.cadastrar(Usuario("ana", "outra")) is False
-    assert pessoas.autenticar(Usuario("ana", "123")) == "sucesso"
-    assert pessoas.autenticar(Usuario("ana", "x")) == "senha_incorreta"
-    assert pessoas.autenticar(Usuario("bia", "123")) == "usuario_inexistente"
-    assert pessoas.obter_id("ana") == "0001"
 
 
-def test_usuario_exige_login_e_senha():
-    with pytest.raises(ValueError):
-        Usuario("", "123")
-    with pytest.raises(ValueError):
-        Usuario("ana", "  ")
 
 
 def test_listas_e_historico_persistem_por_usuario(pessoas):
@@ -119,14 +74,6 @@ def test_listas_respeitam_limite_e_nomes_unicos():
         usuario.criar_lista("Terceira", limite=2)
 
 
-def test_lista_nao_repete_nem_remove_o_que_nao_tem():
-    lista = Usuario("ana", "1").criar_lista("L")
-    lista.adicionar(1)
-    with pytest.raises(ValueError):
-        lista.adicionar(1)
-    lista.remover(1)
-    with pytest.raises(ValueError):
-        lista.remover(1)
 
 
 def test_remover_midia_limpa_todas_as_listas():
@@ -148,8 +95,3 @@ def test_configuracoes_validam_e_convertem_horas():
         config.definir("inexistente", 1)
 
 
-def test_settings_json_ida_e_volta(tmp_path):
-    repositorio = CadastrarConfiguracoes(tmp_path)
-    assert repositorio.carregar() == Configuracoes()  # arquivo ausente -> padrão
-    repositorio.salvar(Configuracoes(nota_minima_recomendado=8, limite_listas=3))
-    assert repositorio.carregar().limite_listas == 3

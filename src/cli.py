@@ -6,7 +6,7 @@ Sem argumentos, o main abre o menu interativo (src/menu.py).
 import argparse
 import sys
 
-from src.comandos import RELATORIOS, Comandos, ler_senha, linha, mostrar
+from src.comandos import RELATORIOS, Comandos, ler_senha, linha, mostrar, mostrar_mensagem
 
 EXEMPLOS = """\
 exemplos:
@@ -36,17 +36,17 @@ NOME_LISTA = (("nome",), {"help": "nome da lista"})
 def midia_adicionar(cmd, a):
     midia = cmd.adicionar_midia(a.tipo, a.titulo, a.genero, a.ano, a.classificacao,
                                 a.elenco, a.duracao)
-    print(f"Cadastrado: {linha(midia)}")
+    mostrar_mensagem(f"Cadastrado: {linha(midia)}")
     if a.tipo.startswith("s"):
-        print(f"Dica: adicione episódios com: serie adicionar-temporada {midia.id} -t 1 --episodios N --duracao MIN")
+        mostrar_mensagem(f"Dica: adicione episódios com: serie adicionar-temporada {midia.id} -t 1 --episodios N --duracao MIN")
 
 
 def midia_avaliar(cmd, a):
-    print(f"Avaliação registrada: {linha(cmd.avaliar(a.id, a.nota, a.temporada, a.episodio))}")
+    mostrar_mensagem(f"Avaliação registrada: {linha(cmd.avaliar(a.id, a.nota, a.temporada, a.episodio))}")
 
 
 def atualizar_status(cmd, a):
-    print(f"Status atualizado: {linha(cmd.atualizar_status(a.id, a.status, a.temporada, a.episodio))}")
+    mostrar_mensagem(f"Status atualizado: {linha(cmd.atualizar_status(a.id, a.status, a.temporada, a.episodio))}")
 
 
 def midia_listar(cmd, a):
@@ -55,13 +55,13 @@ def midia_listar(cmd, a):
 
 
 def midia_remover(cmd, a):
-    print(f"Removido: {cmd.remover(a.id).titulo}")
+    mostrar_mensagem(f"Removido: {cmd.remover(a.id).titulo}")
 
 
 def midia_recomendar(cmd, a):
     minimo = cmd.config.nota_minima_recomendado
     midias = cmd.recomendar()
-    print(f"Sugestões (nota média a partir de {minimo:g}):")
+    mostrar_mensagem(f"Sugestões (nota média a partir de {minimo:g}):")
     mostrar([linha(m) for m in midias] or ["Nenhuma mídia com essa nota ainda."])
 
 
@@ -72,12 +72,12 @@ def midia_relatorio(cmd, a):
 # -- serie ---------------------------------------------------------------------
 def serie_adicionar_episodio(cmd, a):
     serie = cmd.adicionar_episodio(a.id, a.temporada, a.numero, a.titulo, a.duracao, a.lancamento)
-    print(f"Episódio adicionado. {serie.titulo} agora tem {len(serie)} episódio(s).")
+    mostrar_mensagem(f"Episódio adicionado. {serie.titulo} agora tem {len(serie)} episódio(s).")
 
 
 def serie_adicionar_temporada(cmd, a):
     serie, numero = cmd.adicionar_temporada(a.id, a.episodios, a.duracao, a.lancamento, a.temporada)
-    print(f"Temporada {numero} criada em {serie.titulo} com {a.episodios} episódios.")
+    mostrar_mensagem(f"Temporada {numero} criada em {serie.titulo} com {a.episodios} episódios.")
 
 
 def serie_episodios(cmd, a):
@@ -88,39 +88,39 @@ def serie_episodios(cmd, a):
 def usuario_entrar(cmd, a):
     senha = a.senha or ler_senha()
     novo = cmd.entrar(a.nome, senha)
-    print(f"Conta criada. Você está conectado como {cmd.usuario.login}." if novo
-          else f"Você entrou como {cmd.usuario.login}.")
+    mostrar_mensagem(f"Conta criada. Você está conectado como {cmd.usuario.login}." if novo
+                     else f"Você entrou como {cmd.usuario.login}.")
 
 
 def usuario_sair(cmd, a):
     cmd.sair()
-    print("Você saiu da conta.")
+    mostrar_mensagem("Você saiu da conta.")
 
 
 def usuario_quem(cmd, a):
-    print(f"Conectado como {cmd.usuario.login}." if cmd.usuario else "Ninguém conectado.")
+    mostrar_mensagem(f"Conectado como {cmd.usuario.login}." if cmd.usuario else "Ninguém conectado.")
 
 
 def usuario_criar_lista(cmd, a):
-    print(f"Lista criada: {cmd.criar_lista(a.nome).nome}")
+    mostrar_mensagem(f"Lista criada: {cmd.criar_lista(a.nome).nome}")
 
 
 def usuario_adicionar_favorito(cmd, a):
     cmd.adicionar_favorito(a.id)
-    print("Adicionada aos favoritos.")
+    mostrar_mensagem("Adicionada aos favoritos.")
 
 
 def usuario_adicionar_na_lista(cmd, a):
-    print(f"Adicionada à lista '{cmd.adicionar_na_lista(a.nome, a.id).nome}'.")
+    mostrar_mensagem(f"Adicionada à lista '{cmd.adicionar_na_lista(a.nome, a.id).nome}'.")
 
 
 def usuario_remover_da_lista(cmd, a):
-    print(f"Removida da lista '{cmd.remover_da_lista(a.nome, a.id).nome}'.")
+    mostrar_mensagem(f"Removida da lista '{cmd.remover_da_lista(a.nome, a.id).nome}'.")
 
 
 def usuario_apagar_lista(cmd, a):
     cmd.apagar_lista(a.nome)
-    print("Lista apagada.")
+    mostrar_mensagem("Lista apagada.")
 
 
 def usuario_listas(cmd, a):
@@ -138,11 +138,11 @@ def config_mostrar(cmd, a):
 
 def config_definir(cmd, a):
     cmd.definir_config(a.chave, a.valor)
-    print(f"{a.chave} atualizado.")
+    mostrar_mensagem(f"{a.chave} atualizado.")
 
 
 def exemplos(cmd, a):
-    print(f"{cmd.carregar_exemplos()} mídia(s) de exemplo cadastrada(s).")
+    mostrar_mensagem(f"{cmd.carregar_exemplos()} mídia(s) de exemplo cadastrada(s).")
 
 
 def abrir_menu(cmd, a):

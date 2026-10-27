@@ -2,17 +2,14 @@
     "1": {
         "id": 1,
         "tipo": "FILME",
-        "titulo": "Interestelar",
-        "genero": "Ficção Científica",
-        "ano": 2014,
-        "classificacao": "10",
-        "elenco": [
-            "Matthew McConaughey",
-            "Anne Hathaway"
-        ],
-        "duracao": 169.0,
-        "status": "ASSISTIDO",
-        "nota": 9.5
+        "titulo": "Filme bom",
+        "genero": "Teste",
+        "ano": 2015,
+        "classificacao": "L",
+        "elenco": [],
+        "duracao": 120.0,
+        "status": "NÃO ASSISTIDO",
+        "nota": null
     },
     "2": {
         "id": 2,
@@ -22,325 +19,62 @@
         "ano": 1999,
         "classificacao": "14",
         "elenco": [
-            "Keanu Reeves",
-            "Carrie-Anne Moss"
+            "Keanu Reeves"
         ],
         "duracao": 136.0,
-        "status": "ASSISTIDO",
-        "nota": 9.0
+        "status": "NÃO ASSISTIDO",
+        "nota": null
     },
     "3": {
         "id": 3,
         "tipo": "FILME",
-        "titulo": "Parasita",
-        "genero": "Suspense",
-        "ano": 2019,
-        "classificacao": "16",
+        "titulo": "Interestelar",
+        "genero": "Ficção Científica",
+        "ano": 2014,
+        "classificacao": "10",
         "elenco": [
-            "Song Kang-ho",
-            "Choi Woo-shik"
+            "Matthew McConaughey"
         ],
-        "duracao": 132.0,
-        "status": "ASSISTIDO",
-        "nota": 8.5
+        "duracao": 169.0,
+        "status": "NÃO ASSISTIDO",
+        "nota": null
     },
     "4": {
         "id": 4,
-        "tipo": "FILME",
-        "titulo": "Cidade de Deus",
-        "genero": "Crime",
-        "ano": 2002,
-        "classificacao": "18",
+        "tipo": "SERIE",
+        "titulo": "Dark",
+        "genero": "Suspense",
+        "ano": 2017,
+        "classificacao": "16",
         "elenco": [
-            "Alexandre Rodrigues",
-            "Leandro Firmino"
+            "Louis Hofmann"
         ],
-        "duracao": 130.0,
-        "status": "ASSISTIDO",
-        "nota": 9.0
+        "temporadas": [
+            {
+                "numero": 1,
+                "episodios": [
+                    {
+                        "numero": 1,
+                        "titulo": "Episódio 1",
+                        "duracao": 50.0,
+                        "data_lancamento": null,
+                        "status": "NÃO ASSISTIDO",
+                        "nota": null
+                    }
+                ]
+            }
+        ]
     },
     "5": {
         "id": 5,
         "tipo": "FILME",
-        "titulo": "Toy Story",
-        "genero": "Animação",
-        "ano": 1995,
-        "classificacao": "L",
-        "elenco": [
-            "Tom Hanks",
-            "Tim Allen"
-        ],
-        "duracao": 81.0,
-        "status": "ASSISTINDO",
-        "nota": null
-    },
-    "6": {
-        "id": 6,
-        "tipo": "FILME",
-        "titulo": "O Poderoso Chefão",
-        "genero": "Crime",
-        "ano": 1972,
-        "classificacao": "16",
-        "elenco": [
-            "Marlon Brando",
-            "Al Pacino"
-        ],
-        "duracao": 175.0,
-        "status": "NÃO ASSISTIDO",
-        "nota": null
-    },
-    "7": {
-        "id": 7,
-        "tipo": "SERIE",
-        "titulo": "Breaking Bad",
-        "genero": "Crime",
-        "ano": 2008,
-        "classificacao": "16",
-        "elenco": [
-            "Bryan Cranston",
-            "Aaron Paul"
-        ],
-        "temporadas": [
-            {
-                "numero": 1,
-                "episodios": [
-                    {
-                        "numero": 1,
-                        "titulo": "Episódio 1",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": 9.5
-                    },
-                    {
-                        "numero": 2,
-                        "titulo": "Episódio 2",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": 9.0
-                    },
-                    {
-                        "numero": 3,
-                        "titulo": "Episódio 3",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": 8.5
-                    },
-                    {
-                        "numero": 4,
-                        "titulo": "Episódio 4",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 5,
-                        "titulo": "Episódio 5",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 6,
-                        "titulo": "Episódio 6",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 7,
-                        "titulo": "Episódio 7",
-                        "duracao": 47.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    }
-                ]
-            }
-        ]
-    },
-    "8": {
-        "id": 8,
-        "tipo": "SERIE",
-        "titulo": "Dark",
-        "genero": "Ficção Científica",
-        "ano": 2017,
-        "classificacao": "16",
-        "elenco": [
-            "Louis Hofmann",
-            "Lisa Vicari"
-        ],
-        "temporadas": [
-            {
-                "numero": 1,
-                "episodios": [
-                    {
-                        "numero": 1,
-                        "titulo": "Episódio 1",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": 9.0
-                    },
-                    {
-                        "numero": 2,
-                        "titulo": "Episódio 2",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": 8.5
-                    },
-                    {
-                        "numero": 3,
-                        "titulo": "Episódio 3",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 4,
-                        "titulo": "Episódio 4",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 5,
-                        "titulo": "Episódio 5",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 6,
-                        "titulo": "Episódio 6",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 7,
-                        "titulo": "Episódio 7",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 8,
-                        "titulo": "Episódio 8",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 9,
-                        "titulo": "Episódio 9",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    },
-                    {
-                        "numero": 10,
-                        "titulo": "Episódio 10",
-                        "duracao": 50.0,
-                        "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
-                    }
-                ]
-            }
-        ]
-    },
-    "9": {
-        "id": 9,
-        "tipo": "FILME",
-        "titulo": "101 Dalmatas",
-        "genero": "drama",
-        "ano": 1990,
-        "classificacao": "L",
-        "elenco": [],
-        "duracao": 120.0,
-        "status": "ASSISTIDO",
-        "nota": 7.0
-    },
-    "10": {
-        "id": 10,
-        "tipo": "FILME",
-        "titulo": "Titulo",
-        "genero": "Genero",
-        "ano": 2026,
+        "titulo": "Pokemon",
+        "genero": "Ação",
+        "ano": 1999,
         "classificacao": "L",
         "elenco": [],
         "duracao": 120.0,
         "status": "NÃO ASSISTIDO",
-        "nota": null
-    },
-    "11": {
-        "id": 11,
-        "tipo": "SERIE",
-        "titulo": "SerieA",
-        "genero": "teste",
-        "ano": 2026,
-        "classificacao": "L",
-        "elenco": [],
-        "temporadas": [
-            {
-                "numero": 1,
-                "episodios": [
-                    {
-                        "numero": 1,
-                        "titulo": "Episódio 1",
-                        "duracao": 24.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": 10.0
-                    },
-                    {
-                        "numero": 2,
-                        "titulo": "Episódio 2",
-                        "duracao": 24.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    }
-                ]
-            }
-        ]
-    },
-    "12": {
-        "id": 12,
-        "tipo": "SERIE",
-        "titulo": "serieB",
-        "genero": "2026",
-        "ano": 2030,
-        "classificacao": "L",
-        "elenco": [],
-        "temporadas": [
-            {
-                "numero": 1,
-                "episodios": [
-                    {
-                        "numero": 1,
-                        "titulo": "Episódio 1",
-                        "duracao": 24.0,
-                        "data_lancamento": null,
-                        "status": "ASSISTIDO",
-                        "nota": null
-                    }
-                ]
-            }
-        ]
+        "nota": 10.0
     }
 }

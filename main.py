@@ -8,7 +8,7 @@ import sys
 import shlex
 
 from src.cli import executar, criar_parser
-from src.comandos import Comandos
+from src.comandos import Comandos, mostrar_mensagem
 from src.menu import Menu
 
 
@@ -63,6 +63,8 @@ Digite os comandos sem escrever "python main.py" antes deles.
 
 def _terminal_comandos(pasta=None):
     """Mantém o modo CLI ativo e aceita vários comandos na mesma execução."""
+    # O shlex entende aspas como parte dos argumentos, como acontece no shell.
+    # Se a entrada estiver incompleta, mostramos o erro e mantemos o terminal aberto.
     _mostrar_comandos()
     while True:
         try:
@@ -81,7 +83,7 @@ def _terminal_comandos(pasta=None):
         try:
             argumentos = shlex.split(texto, posix=True)
         except ValueError as erro:
-            print(f"Erro ao interpretar o comando: {erro}")
+            mostrar_mensagem(f"Erro ao interpretar o comando: {erro}")
             continue
         try:
             executar(argumentos, pasta)
@@ -93,7 +95,9 @@ def _terminal_comandos(pasta=None):
 
 
 def _escolher_interface(pasta=None):
+    # As duas interfaces chamam a mesma camada de regras do sistema.
     while True:
+        # Cada opção é apresentada como uma tela separada das respostas anteriores.
         print("\n=== CATÁLOGO DE FILMES E SÉRIES ===")
         print("1. Menu guiado (escolher opções com números)")
         print("2. CLI com comandos (digitar ou copiar e colar comandos)")

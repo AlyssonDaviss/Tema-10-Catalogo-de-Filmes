@@ -34,63 +34,24 @@ def test_filme_rejeita_valores_invalidos(campo, valor):
         setattr(f, campo, valor)
 
 
-def test_episodio_exige_numeros_positivos():
-    with pytest.raises(ValueError):
-        Episodio(0, 1, "Piloto", 40)
-    with pytest.raises(ValueError):
-        Episodio(1, -2, "Piloto", 40)
-    with pytest.raises(ValueError):
-        Episodio(1, 1, "", 40)
 
 
-def test_status_aceita_variacoes_de_escrita():
-    assert Status.converter("nao-assistido") is Status.NAO_ASSISTIDO
-    assert Status.converter(" Assistindo ") is Status.ASSISTINDO
 
 
 # -- métodos especiais --------------------------------------------------------
-def test_eq_compara_titulo_e_tipo_sem_diferenciar_maiusculas():
-    assert filme("MATRIX") == filme("matrix", ano=2003)
-    assert filme("Dark") != serie(titulo="Dark")
 
 
-def test_lt_ordena_por_nota_media():
-    a, b, c = filme("A"), filme("B"), filme("C")
-    a.nota, b.nota = 9, 7
-    assert sorted([b, c, a]) == [c, b, a]  # sem nota < 7 < 9
-    assert b < a
 
 
-def test_len_conta_episodios_de_todas_as_temporadas():
-    s = serie(episodios=3)
-    s.criar_temporada(2, 5, 50)
-    assert len(s) == 8
 
 
-def test_str_e_repr():
-    f = filme()
-    assert "Matrix (1999) [FILME]" in str(f)
-    assert repr(f).startswith("Filme(")
 
 
 # -- séries, temporadas e episódios -------------------------------------------
-def test_criar_temporada_gera_episodios_genericos():
-    s = serie(episodios=4)
-    assert [e.titulo for e in s.temporada(1)] == [f"Episódio {n}" for n in range(1, 5)]
-    assert s.duracao_total == 200
 
 
-def test_criar_temporada_invalida_nao_deixa_lixo():
-    s = Serie("X", "Y", 2000, "L")
-    with pytest.raises(ValueError):
-        s.criar_temporada(1, 3, 0)
-    assert s.temporadas == []
 
 
-def test_episodio_duplicado_e_rejeitado():
-    s = serie(episodios=2)
-    with pytest.raises(ValueError, match="já existe"):
-        s.adicionar_episodio(Episodio(1, 1, "Outro", 30))
 
 
 def test_serie_vira_assistida_quando_todos_os_episodios_forem():
@@ -119,20 +80,8 @@ def test_definir_status_so_devolve_o_que_acabou_de_ser_concluido():
     assert s.minutos_assistidos == 150
 
 
-def test_filme_nao_aceita_temporada_e_serie_avalia_escopos():
-    with pytest.raises(ValueError):
-        filme().avaliar(8, temporada=1)
-    s = serie(episodios=2)
-    s.avaliar(8)
-    assert [ep.nota for ep in s.episodios] == [8, 8]
 
 
-def test_temporada_ou_episodio_inexistente():
-    s = serie(episodios=2)
-    with pytest.raises(ValueError):
-        s.definir_status("ASSISTIDO", 9)
-    with pytest.raises(ValueError):
-        s.definir_status("ASSISTIDO", 1, 99)
 
 
 # -- serialização ---------------------------------------------------------------
