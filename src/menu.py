@@ -1,7 +1,7 @@
 """Menu interativo: perguntas passo a passo sobre a mesma lógica dos subcomandos."""
 
-from src.comandos import Comandos, ler_senha, linha, mostrar, mostrar_mensagem
-from src.midia import Serie, Status
+from src.services.comandos import Comandos, ler_senha, linha, mostrar, mostrar_mensagem
+from src.domain.midia import Serie, Status
 
 
 # -- entrada de dados ----------------------------------------------------------
@@ -84,7 +84,7 @@ class Menu:
             ("Mídias", self.menu_midias),
             ("Minhas listas e favoritos", self.menu_listas),
             ("Relatórios", self.menu_relatorios),
-            ("Configurações e dados de exemplo", self.menu_configuracoes),
+            ("Configurações", self.menu_configuracoes),
         ], saida="Sair")
         mostrar_mensagem("Até logo!")
 
@@ -372,11 +372,7 @@ class Menu:
             ("Limite de listas por usuário", alterar("limite_listas", "Limite de listas")),
             ("Multiplicador de duração (minutos → horas)",
              alterar("multiplicador_duracao", "Multiplicador")),
-                        ("Carregar filmes e séries de exemplo", self.carregar_exemplos),
         ])
-
-    def carregar_exemplos(self):
-        mostrar_mensagem(f"{self.cmd.carregar_exemplos()} mídia(s) de exemplo cadastrada(s).")
 
     def sair_da_conta(self):
         self.cmd.sair()

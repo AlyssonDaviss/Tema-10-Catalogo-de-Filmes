@@ -3,7 +3,7 @@
 from dataclasses import asdict
 
 from repositories.base import RAIZ, RepositorioJson
-from src.config import Configuracoes
+from src.domain.config import Configuracoes
 
 
 class CadastrarConfiguracoes(RepositorioJson):

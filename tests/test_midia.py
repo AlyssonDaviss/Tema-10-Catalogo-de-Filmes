@@ -1,6 +1,6 @@
 import pytest
 
-from src.midia import Episodio, Filme, Midia, Serie, Status
+from src.domain.midia import Episodio, Filme, Midia, Serie, Status
 
 
 def filme(titulo="Matrix", ano=1999, **extra):

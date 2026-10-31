@@ -1,7 +1,7 @@
 """Persistência das mídias (com temporadas e episódios) em data/midia_dic.json."""
 
 from repositories.base import RepositorioJson
-from src.midia import Midia
+from src.domain.midia import Midia
 
 
 class CadastrarMidia(RepositorioJson):

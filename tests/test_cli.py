@@ -56,6 +56,15 @@ def test_erro_de_regra_vira_mensagem_e_codigo_1(cli):
 
 
 
+def test_ajuda_em_tres_niveis(cli):
+    codigo, saida, _ = cli("ajuda")
+    assert codigo == 0 and "adicionar-temporada" in saida and "exemplos" in saida
+    assert "midia avaliar <id> <nota>" in cli("ajuda", "midia")[1]
+    assert "--duracao" in cli("ajuda", "midia", "adicionar")[1]
+    codigo, _, erro = cli("ajuda", "foo")
+    assert codigo == 1 and "Não existe" in erro
+
+
 def test_listas_favoritos_e_sessao(cli):
     cli(*FILME)
     cli("usuario", "entrar", "ana", "--senha", "123")
@@ -90,7 +99,7 @@ def test_voltar_para_nao_assistido_limpa_historico_e_periodo(cli):
 
 
 def test_editar_midia_rejeita_duplicidade(tmp_path):
-    from src.comandos import Comandos
+    from src.services.comandos import Comandos
 
     cmd = Comandos(tmp_path)
     a = cmd.adicionar_midia("filme", "Matrix", "Ficção", 1999, "14", "Elenco", 136)

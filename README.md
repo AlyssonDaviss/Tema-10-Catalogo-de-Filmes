@@ -293,6 +293,36 @@ classDiagram
 
 </details>
 
+## Estrutura de pastas
+
+```text
+main.py            ponto de entrada (menu guiado ou CLI com subcomandos)
+src/
+  cli.py, menu.py  interfaces (entrada e saída de tela)
+  domain/          classes e regras de negócio: midia, user, listas, historico, config
+  services/        lógica de aplicação: comandos, relatorio, seed
+repositories/      acesso e persistência dos dados (JSON)
+data/              arquivos JSON gerados pelos repositórios
+tests/             testes automatizados
+```
+
+## Como pedir ajuda na CLI
+
+```text
+python main.py ajuda                    todos os comandos, um por linha
+python main.py ajuda midia              comandos do grupo com seus argumentos
+python main.py ajuda midia adicionar    detalhes de um comando
+```
+
+No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `ajuda`, `ajuda midia` etc., sem o prefixo `python main.py`. O guia é gerado a partir dos próprios subcomandos, então não existe uma lista de comandos escrita à mão para manter.
+
+## Requisitos técnicos atendidos
+
+- **@property com validação** (`src/domain/midia.py`): título não vazio (`Midia`, `Episodio`), duração > 0 e nota entre 0 e 10 (`AssistivelMixin`).
+- **Métodos especiais**: `__str__`, `__repr__`, `__eq__`, `__hash__`, `__lt__` em `Midia`; `__len__` em `Serie`, `Temporada` e `ListaPersonalizada`; também `__iter__` e `__contains__`.
+- **Mixin e herança dupla**: `AssistivelMixin` (duração, status e nota) é combinado a `Midia` em `Filme(AssistivelMixin, Midia)` e reaproveitado por `Episodio`.
+- **Camadas**: `domain` não conhece persistência nem tela; `repositories` só leem e gravam; `services` orquestram regras e repositórios.
+
 ### Decisões de Design
 
 ```text

@@ -6,10 +6,10 @@ import pytest
 
 from repositories.cadastrar_midia import CadastrarMidia
 from repositories.cadastrar_pessoa import CadastrarUsuario
-from src.comandos import Comandos
+from src.services.comandos import Comandos
 from src.menu import Menu
-from src.midia import Filme
-from src.user import Usuario
+from src.domain.midia import Filme
+from src.domain.user import Usuario
 
 
 def digitar(monkeypatch, *respostas):
@@ -54,7 +54,6 @@ def test_serie_com_temporada_automatica_e_status_por_episodio(pasta, monkeypatch
 
 def test_listas_pelo_menu(pasta, monkeypatch):
     digitar(monkeypatch, "ana", "123",
-            "5", "5", "0",                       # Configurações > carregar exemplos
             "3", "3", "Maratona", "0",           # Listas > criar
             "0")
     abrir(pasta)

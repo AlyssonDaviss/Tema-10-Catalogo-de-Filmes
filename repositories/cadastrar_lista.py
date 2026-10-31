@@ -1,7 +1,7 @@
 """Persistência das listas personalizadas em data/listas.json (por usuário)."""
 
 from repositories.base import RepositorioJson
-from src.listas import ListaPersonalizada
+from src.domain.listas import ListaPersonalizada
 
 
 class CadastrarLista(RepositorioJson):

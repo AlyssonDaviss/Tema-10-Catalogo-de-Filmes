@@ -7,7 +7,7 @@ repositórios próprios e são reunidos em carregar_usuario/salvar_usuario.
 from repositories.base import RepositorioJson
 from repositories.cadastrar_historico import CadastrarHistorico
 from repositories.cadastrar_lista import CadastrarLista
-from src.user import Usuario
+from src.domain.user import Usuario
 
 
 class CadastrarUsuario(RepositorioJson):

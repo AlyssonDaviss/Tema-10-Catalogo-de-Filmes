@@ -8,7 +8,7 @@
         "classificacao": "L",
         "elenco": [],
         "duracao": 120.0,
-        "status": "NÃO ASSISTIDO",
+        "status": "ASSISTIDO",
         "nota": null
     },
     "2": {
@@ -22,8 +22,8 @@
             "Keanu Reeves"
         ],
         "duracao": 136.0,
-        "status": "NÃO ASSISTIDO",
-        "nota": null
+        "status": "ASSISTIDO",
+        "nota": 10.0
     },
     "3": {
         "id": 3,
@@ -58,8 +58,8 @@
                         "titulo": "Episódio 1",
                         "duracao": 50.0,
                         "data_lancamento": null,
-                        "status": "NÃO ASSISTIDO",
-                        "nota": null
+                        "status": "ASSISTIDO",
+                        "nota": 8.0
                     }
                 ]
             }
@@ -76,5 +76,17 @@
         "duracao": 120.0,
         "status": "NÃO ASSISTIDO",
         "nota": 10.0
+    },
+    "6": {
+        "id": 6,
+        "tipo": "FILME",
+        "titulo": "Guardiões da Galáxia",
+        "genero": "ação",
+        "ano": 2014,
+        "classificacao": "16",
+        "elenco": [],
+        "duracao": 120.0,
+        "status": "NÃO ASSISTIDO",
+        "nota": null
     }
 }

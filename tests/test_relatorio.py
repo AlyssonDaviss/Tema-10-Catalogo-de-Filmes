@@ -3,10 +3,9 @@ from datetime import datetime
 import pytest
 
 from repositories.cadastrar_midia import CadastrarMidia
-from src import relatorio
-from src.midia import Filme, Serie
-from src.seed import popular
-from src.user import Usuario
+from src.services import relatorio
+from src.domain.midia import Filme, Serie
+from src.domain.user import Usuario
 
 
 def filme(titulo, genero, duracao, status="ASSISTIDO", nota=None):

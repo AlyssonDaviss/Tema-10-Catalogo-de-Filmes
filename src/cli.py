@@ -6,21 +6,18 @@ Sem argumentos, o main abre o menu interativo (src/menu.py).
 import argparse
 import sys
 
-from src.comandos import RELATORIOS, Comandos, ler_senha, linha, mostrar, mostrar_mensagem
+from src.services.comandos import RELATORIOS, Comandos, ler_senha, linha, mostrar, mostrar_mensagem
 
-EXEMPLOS = """\
-exemplos:
-  python main.py usuario entrar Davi
-  python main.py midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136
-  python main.py midia listar --status assistido
-  python main.py midia avaliar 1 9.5
-  python main.py serie adicionar-temporada 2 -t 1 --episodios 10 --duracao 50
-  python main.py serie atualizar-status 2 assistido -t 1 -e 3
-  python main.py midia relatorio top
-  python main.py usuario adicionar-favorito 1
+# Fonte única dos exemplos: usada no "-h" e na tela inicial do terminal de comandos.
+EXEMPLOS = (
+    "usuario entrar Davi",
+    'midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136',
+    "midia listar --status assistido",
+    "midia avaliar 1 9.5",
+    "serie adicionar-temporada 2 --episodios 10 --duracao 50",
+    "midia relatorio top",
+)
 
-sem argumentos, abre o menu interativo.   ajuda de um comando: python main.py midia -h
-"""
 
 # -- argumentos reaproveitados -------------------------------------------------
 ID = (("id",), {"type": int, "help": "ID da mídia (veja em: midia listar)"})
@@ -151,9 +148,86 @@ def abrir_menu(cmd, a):
     Menu(cmd).iniciar()
 
 
+# -- ajuda ---------------------------------------------------------------------
+def _subcomandos(parser):
+    """{nome: parser} dos subcomandos de um parser (vazio se for um comando final)."""
+    for acao in parser._actions:
+        if isinstance(acao, argparse._SubParsersAction):
+            return acao.choices
+    return {}
+
+
+def nomes_grupos(parser=None):
+    """Nomes dos grupos que têm ações (midia, serie, usuario, config)."""
+    raiz = _subcomandos(parser or criar_parser())
+    return [nome for nome, sub in raiz.items() if _subcomandos(sub)]
+
+
+def _assinatura(parser):
+    """Resumo dos argumentos: <obrigatório posicional> --obrigatório X [--opcional X]."""
+    partes = []
+    for a in parser._actions:
+        if isinstance(a, (argparse._HelpAction, argparse._SubParsersAction)):
+            continue
+        valor = "|".join(map(str, a.choices)) if a.choices else (a.metavar or a.dest).upper()
+        if a.option_strings:
+            texto = f"{max(a.option_strings, key=len)} {valor}"
+            partes.append(texto if a.required else f"[{texto}]")
+        else:
+            nome = valor.lower()
+            partes.append(f"[{nome}]" if a.nargs in ("?", "*") else f"<{nome}>")
+    return " ".join(partes)
+
+
+def _ajuda_geral(raiz):
+    linhas = ["COMANDOS   (detalhes: ajuda <grupo>  |  ajuda <grupo> <ação>)"]
+    avulsos = []
+    for nome, sub in raiz.items():
+        filhos = _subcomandos(sub)
+        if not filhos:
+            avulsos.append((nome, sub.description))
+            continue
+        linhas += ["", f"{nome} - {sub.description}"]
+        largura = max(map(len, filhos))
+        linhas += [f"  {acao:<{largura}}  {filho.description}" for acao, filho in filhos.items()]
+    largura = max(len(nome) for nome, _ in avulsos)
+    linhas += ["", "outros"] + [f"  {nome:<{largura}}  {desc}" for nome, desc in avulsos]
+    return "\n".join(linhas)
+
+
+def _ajuda_grupo(nome, sub, filhos):
+    linhas = [f"{nome.upper()} - {sub.description}", ""]
+    for acao, filho in filhos.items():
+        linhas += [f"  {nome} {acao} {_assinatura(filho)}".rstrip(), f"      {filho.description}"]
+    linhas += ["", f"detalhes de um comando: ajuda {nome} <ação>"]
+    return "\n".join(linhas)
+
+
+def texto_ajuda(parser, alvo=()):
+    """Guia em três níveis: tudo, um grupo ou um comando."""
+    raiz = _subcomandos(parser)
+    if not alvo:
+        return _ajuda_geral(raiz)
+    nome, *resto = (palavra.casefold() for palavra in alvo)
+    if nome not in raiz:
+        raise ValueError(f"Não existe '{nome}'. Veja a lista completa com: ajuda")
+    filhos = _subcomandos(raiz[nome])
+    if not filhos:
+        return raiz[nome].format_help().strip()
+    if not resto:
+        return _ajuda_grupo(nome, raiz[nome], filhos)
+    if len(resto) > 1 or resto[0] not in filhos:
+        raise ValueError(f"Não existe '{' '.join(resto)}' em {nome}. Veja: ajuda {nome}")
+    return filhos[resto[0]].format_help().strip()
+
+
+def ajuda(cmd, a):
+    mostrar_mensagem(texto_ajuda(criar_parser(), a.alvo))
+
+
 # -- montagem do parser --------------------------------------------------------
 def _grupo(raiz, nome, ajuda):
-    return raiz.add_parser(nome, help=ajuda).add_subparsers(
+    return raiz.add_parser(nome, help=ajuda, description=ajuda).add_subparsers(
         dest=f"acao_{nome}", metavar="ação", required=True)
 
 
@@ -168,7 +242,8 @@ def criar_parser():
     parser = argparse.ArgumentParser(
         prog="python main.py",
         description="Catálogo pessoal de filmes e séries.",
-        epilog=EXEMPLOS,
+        epilog="exemplos:\n" + "\n".join(f"  python main.py {e}" for e in EXEMPLOS)
+               + "\n\nguia completo: python main.py ajuda",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     raiz = parser.add_subparsers(dest="grupo", metavar="comando", required=True)
@@ -234,8 +309,10 @@ def criar_parser():
     _acao(config, "definir", config_definir, "altera uma configuração",
           (("chave",), {}), (("valor",), {}))
 
-    raiz.add_parser("exemplos", help="cadastra filmes e séries de exemplo").set_defaults(funcao=exemplos)
-    raiz.add_parser("menu", help="abre o menu interativo").set_defaults(funcao=abrir_menu)
+    _acao(raiz, "exemplos", exemplos, "cadastra filmes e séries de exemplo")
+    _acao(raiz, "menu", abrir_menu, "abre o menu interativo")
+    _acao(raiz, "ajuda", ajuda, "guia dos comandos: ajuda | ajuda <grupo> | ajuda <grupo> <ação>",
+          (("alvo",), {"nargs": "*", "help": "grupo e, se quiser, a ação"}))
     return parser
 
 

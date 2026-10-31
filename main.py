@@ -7,65 +7,29 @@
 import sys
 import shlex
 
-from src.cli import executar, criar_parser
-from src.comandos import Comandos, mostrar_mensagem
+from src.cli import EXEMPLOS, executar, nomes_grupos
+from src.services.comandos import Comandos, mostrar_mensagem
 from src.menu import Menu
 
 
-def _mostrar_comandos():
-    """Exibe modelos de comandos que podem ser copiados e colados."""
-    print("""
-COMANDOS PARA COPIAR E COLAR
-(Substitua os valores entre < > pelos dados desejados.)
-
-Conta:
-  usuario entrar <login>
-  usuario quem
-  usuario sair
-
-Mídias:
-  midia adicionar --tipo filme --titulo "Matrix" --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136
-  midia adicionar --tipo serie --titulo "Dark" --genero "Suspense" --ano 2017 --classificacao 16
-  midia listar
-  midia listar --tipo filme
-  midia listar --busca "Matrix"
-  midia avaliar <ID> <NOTA>
-  midia atualizar-status <ID> "ASSISTIDO"
-  midia recomendar
-  midia remover <ID>
-  midia relatorio top
-  midia relatorio geral
-  midia relatorio notas --por genero
-  midia relatorio tempo
-
-Séries:
-  serie adicionar-temporada <ID> --episodios 10 --duracao 45
-  serie adicionar-episodio <ID> -t 1 -n 1 --titulo "Piloto" --duracao 45
-  serie atualizar-status <ID> "ASSISTINDO"
-  serie episodios <ID>
-
-Listas e favoritos:
-  usuario criar-lista "Quero assistir"
-  usuario adicionar-favorito <ID>
-  usuario adicionar-na-lista "Quero assistir" <ID>
-  usuario listas
-  usuario historico
-
-Outros:
-  config mostrar
-  exemplos
-  ajuda
-  sair
-
-Digite os comandos sem escrever "python main.py" antes deles.
-""")
+def _boas_vindas():
+    """Tela inicial do terminal de comandos: como pedir ajuda e por onde começar."""
+    print("\nMODO COMANDOS")
+    print("  ajuda                  lista todos os comandos")
+    print(f"  ajuda <grupo>          detalha um grupo ({', '.join(nomes_grupos())})")
+    print("  ajuda <grupo> <ação>   detalha um comando, ex.: ajuda midia adicionar")
+    print("  sair                   encerra")
+    print("\nPara começar:")
+    for exemplo in EXEMPLOS:
+        print(f"  {exemplo}")
+    print()
 
 
 def _terminal_comandos(pasta=None):
     """Mantém o modo CLI ativo e aceita vários comandos na mesma execução."""
     # O shlex entende aspas como parte dos argumentos, como acontece no shell.
     # Se a entrada estiver incompleta, mostramos o erro e mantemos o terminal aberto.
-    _mostrar_comandos()
+    _boas_vindas()
     while True:
         try:
             texto = input("\ncatálogo> ").strip()
@@ -77,14 +41,13 @@ def _terminal_comandos(pasta=None):
         if texto.casefold() in {"sair", "exit", "quit"}:
             print("Até logo!")
             return 0
-        if texto.casefold() in {"ajuda", "help", "comandos"}:
-            _mostrar_comandos()
-            continue
         try:
             argumentos = shlex.split(texto, posix=True)
         except ValueError as erro:
             mostrar_mensagem(f"Erro ao interpretar o comando: {erro}")
             continue
+        if argumentos and argumentos[0].casefold() in {"help", "comandos"}:
+            argumentos[0] = "ajuda"
         try:
             executar(argumentos, pasta)
         except SystemExit:

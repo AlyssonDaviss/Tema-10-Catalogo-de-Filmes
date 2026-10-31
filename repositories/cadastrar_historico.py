@@ -1,7 +1,7 @@
 """Persistência do histórico de visualização em data/historico.json (por usuário)."""
 
 from repositories.base import RepositorioJson
-from src.historico import RegistroHistorico
+from src.domain.historico import RegistroHistorico
 
 
 class CadastrarHistorico(RepositorioJson):

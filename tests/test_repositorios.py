@@ -5,9 +5,9 @@ import pytest
 from repositories.cadastrar_config import CadastrarConfiguracoes
 from repositories.cadastrar_midia import CadastrarMidia
 from repositories.cadastrar_pessoa import CadastrarUsuario
-from src.config import Configuracoes
-from src.midia import Filme, Serie, Status
-from src.user import Usuario
+from src.domain.config import Configuracoes
+from src.domain.midia import Filme, Serie, Status
+from src.domain.user import Usuario
 
 
 def filme(titulo="Matrix", ano=1999):
