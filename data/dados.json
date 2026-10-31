@@ -11,9 +11,5 @@
             "nota_min_recomendacao": 6.0,
             "limite_listas_personalizadas": 10
         }
-    },
-    "0002": {
-        "usuario": "pedro",
-        "senha": "1234"
     }
 }

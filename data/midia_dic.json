@@ -76,17 +76,5 @@
         "duracao": 120.0,
         "status": "NÃO ASSISTIDO",
         "nota": 10.0
-    },
-    "6": {
-        "id": 6,
-        "tipo": "FILME",
-        "titulo": "Guardiões da Galáxia",
-        "genero": "ação",
-        "ano": 2014,
-        "classificacao": "16",
-        "elenco": [],
-        "duracao": 120.0,
-        "status": "NÃO ASSISTIDO",
-        "nota": null
     }
 }
