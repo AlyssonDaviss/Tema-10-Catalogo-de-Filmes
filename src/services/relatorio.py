@@ -26,10 +26,10 @@ def media_por(midias, atributo="genero"):
 
 
 def minutos_por_tipo(midias):
-    """Total de minutos assistidos por tipo (filme/série)."""
+    """Total de minutos por tipo, somando apenas mídias ASSISTIDO."""
     totais = {"FILME": 0.0, "SERIE": 0.0}
-    for m in midias:
-        totais[m.tipo] += m.minutos_assistidos
+    for m in finalizadas(midias):
+        totais[m.tipo] += m.duracao_total
     return totais
 
 

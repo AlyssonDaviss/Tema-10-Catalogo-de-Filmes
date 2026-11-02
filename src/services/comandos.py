@@ -254,7 +254,7 @@ class Comandos:
         midias = self.midias.listar()
         if qual == "geral":
             nota = relatorio.nota_geral(midias)
-            total = sum(m.minutos_assistidos for m in midias)
+            total = sum(relatorio.minutos_por_tipo(midias).values())
             return [
                 self.resumo().capitalize(),
                 f"Nota geral do catálogo: {'sem notas' if nota is None else f'{nota:.2f}'}",

@@ -88,6 +88,7 @@ def test_remover_midia_limpa_todas_as_listas():
 def test_configuracoes_validam_e_convertem_horas():
     config = Configuracoes()
     assert config.horas(90) == 1.5
+    assert Configuracoes(casas_decimais=0).horas(100) == 2
     assert Configuracoes(multiplicador_duracao=0.0166).horas(600, 1) == 10.0
     with pytest.raises(ValueError):
         config.definir("nota_minima_recomendado", 11)

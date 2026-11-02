@@ -16,121 +16,116 @@
 Atributos:
 - Login
 - Senha
-- Listas personalizadas
-- Favoritos
+- Listas personalizadas (inclui Favoritos)
 - Histórico de visualização
 
 Métodos:
-+ Fazer_login()
 + Criar_lista()
 + Adicionar_favorito()
++ Apagar_lista()
++ Registrar_conclusao()
++ Remover_registros()
 
-**Classe: CLI**
-
-Atributos:
-- Comando
-- Argumentos
-
-Métodos:
-+ Executar()
-+ Processar_comando()
-+ Mostrar_ajuda()
-
-**Classe: Comandos**
+**Classe: Comandos (services)**
 
 Métodos:
-+ Cadastrar_midia()
-+ Listar_midia()
++ Entrar() / Sair()
++ Adicionar_midia()
++ Listar()
 + Avaliar()
-+ Remover_midia()
++ Atualizar_status()
 + Editar_midia()
-+ Criar_lista()
-+ Gerar_relatorio()
-+ Mostrar_config()
++ Remover()
 + Recomendar()
++ Adicionar_temporada() / Adicionar_episodio()
++ Criar_lista() / Adicionar_favorito()
++ Relatorio()
++ Definir_config()
 
-**Classe: Midia**
+**Interfaces: CLI (src/cli.py) e Menu (src/menu.py)**
+
+Ambas apenas leem a entrada e chamam a classe Comandos.
+
+**Classe: Midia (abstrata)**
 
 Atributos:
 - Título
-- Tipo
 - Gênero
 - Ano
 - Classificação_indicativa
 - Elenco[]
-- Status
 
 Métodos:
-+ Cadastrar_midia()
-+ Impedir_duplicidade()
 + Definir_status()
 + Avaliar()
++ __str__() / __repr__() / __eq__() / __hash__() / __lt__()
 
-**Classe: Filme (herda de Midia)**
+**Classe: AssistivelMixin**
 
 Atributos:
-- Duração
+- Duração (> 0)
+- Status
+- Nota (0 a 10)
 
 Métodos:
-+ Registrar_duração()
++ Minutos_assistidos()
+
+**Classe: Filme (herda de AssistivelMixin e Midia)**
+
+Métodos:
++ Definir_status()
++ Avaliar()
 
 **Classe: Serie (herda de Midia)**
 
 Atributos:
 - Temporadas[]
+- Status (calculado a partir dos episódios)
 
 Métodos:
-+ Registrar_temporadas()
++ Criar_temporada()
++ Adicionar_episodio()
 + Definir_status()
 + Avaliar()
++ __len__()
 
 **Classe: Temporada**
 
 Atributos:
 - Número
 - Episódios[]
-- Nota média
 
 Métodos:
-+ Registrar_episodios()
-+ Definir_status()
-+ Avaliar()
++ Adicionar_episodio()
++ Nota_media()
++ __len__()
 
-**Classe: Episodio**
+**Classe: Episodio (usa AssistivelMixin)**
 
 Atributos:
+- Temporada
 - Número
 - Título
-- Duração
-- Status de visualização
-- Nota
-
-Métodos:
-+ Definir_status()
-+ Avaliar()
+- Data de lançamento
 
 **Classe: ListaPersonalizada**
 
 Atributos:
 - Nome
-- Conteúdo[]
+- Mídias[] (IDs, sem duplicatas)
 
 Métodos:
-+ Criar_lista()
-+ Adicionar_na_lista()
-+ Remover_da_lista()
-+ Apagar_lista()
++ Adicionar()
++ Remover()
++ __len__() / __contains__()
 
 **Classe: RegistroHistorico**
 
 Atributos:
-- Mídia
-- Data
-- Tempo assistido
-
-Métodos:
-+ Salvar_historico()
-+ Registrar_tempo()
+- Mídia (ID)
+- Descrição
+- Minutos
+- Data e hora da conclusão
 
 **Classe: Configuracoes**
 
@@ -138,21 +133,24 @@ Atributos:
 - Nota mínima para recomendação
 - Limite de listas personalizadas por usuário
 - Multiplicador de duração
+- Casas decimais do arredondamento das horas
 
 Métodos:
-+ Mostrar_config()
-+ Nota_min_recomendado()
-+ Limite_listas()
++ Horas()
++ Definir()
 
-**Classe: Relatorios**
+**Módulo: relatorio (funções)**
 
-Métodos:
-+ Gerar_resumo()
-+ Gerar_tempo_assistido()
-+ Gerar_top_10()
-+ Notas_por_genero()
-+ Series_com_mais_episodios_assistidos()
-+ Gerar_historico()
++ Nota_geral()
++ Media_por() (gênero ou tipo)
++ Minutos_por_tipo()
++ Top()
++ Series_mais_assistidas()
++ Minutos_por_periodo() (semana ou mês)
+
+**Persistência: repositories (JSON), reunidos em repositories/dados.py**
+
++ CadastrarMidia, CadastrarUsuario (listas e histórico), CadastrarConfiguracoes, CadastrarSessao
 
 </details>
 
@@ -165,100 +163,105 @@ classDiagram
         -String login
         -String senha
         -ListaPersonalizada[] listas
-        -Midia[] favoritos
         -RegistroHistorico[] historico
-    }
-
-    class CLI {
-        +executar()
-        +processar_comando()
-        +mostrar_ajuda()
+        +criar_lista()
+        +adicionar_favorito()
+        +apagar_lista()
+        +registrar_conclusao()
     }
 
     class Comandos {
-        +cadastrar_midia()
-        +listar_midia()
+        +adicionar_midia()
+        +listar()
         +avaliar()
-        +remover_midia()
+        +atualizar_status()
         +editar_midia()
-        +criar_lista()
-        +gerar_relatorio()
+        +remover()
         +recomendar()
+        +adicionar_temporada()
+        +adicionar_episodio()
+        +criar_lista()
+        +relatorio()
     }
 
     class Midia {
+        <<abstract>>
         -String titulo
-        -String tipo
         -String genero
         -int ano
-        -String classificacao_indicativa
+        -String classificacao
         -String[] elenco
-        -Status status
         +definir_status()
         +avaliar()
+        +__eq__()
+        +__lt__()
+    }
+
+    class AssistivelMixin {
+        <<mixin>>
+        -float duracao
+        -Status status
+        -float nota
     }
 
     class Filme {
-        -int duracao
-        +registrar_duracao()
+        +definir_status()
+        +avaliar()
     }
 
     class Serie {
         -Temporada[] temporadas
-        +registrar_temporadas()
+        +criar_temporada()
+        +adicionar_episodio()
         +definir_status()
         +avaliar()
+        +__len__()
     }
 
     class Temporada {
         -int numero
         -Episodio[] episodios
-        -float nota_media
-        +registrar_episodios()
-        +definir_status()
-        +avaliar()
+        +adicionar_episodio()
+        +__len__()
     }
 
     class Episodio {
+        -int temporada
         -int numero
         -String titulo
-        -int duracao
-        -Status status
-        -float nota
-        +definir_status()
-        +avaliar()
+        -Date data_lancamento
     }
 
     class ListaPersonalizada {
         -String nome
-        -Midia[] conteudo
-        +adicionar_na_lista()
-        +remover_da_lista()
-        +apagar_lista()
+        -int[] midias
+        +adicionar()
+        +remover()
     }
 
     class RegistroHistorico {
-        -Midia midia
-        -Date data
-        -float tempo_assistido
-        +salvar_historico()
-        +registrar_tempo()
+        -int midia_id
+        -String descricao
+        -float minutos
+        -DateTime concluido_em
     }
 
     class Configuracoes {
         -float nota_minima_recomendado
         -int limite_listas
         -float multiplicador_duracao
-        +mostrar_config()
+        -int casas_decimais
+        +horas()
     }
 
-    class Relatorios {
-        +gerar_resumo()
-        +gerar_tempo_assistido()
-        +gerar_top_10()
-        +notas_por_genero()
-        +series_com_mais_episodios_assistidos()
-        +gerar_historico()
+    class Relatorio {
+        <<funções>>
+        +nota_geral()
+        +media_por()
+        +minutos_por_tipo()
+        +top()
+        +series_mais_assistidas()
+        +minutos_por_periodo()
     }
 
     class Status {
@@ -268,27 +271,34 @@ classDiagram
         ASSISTIDO
     }
 
+    class Repositorios {
+        <<repositories/dados.py>>
+        +CadastrarMidia
+        +CadastrarUsuario
+        +CadastrarConfiguracoes
+    }
+
     %% Herança
     Midia <|-- Filme
     Midia <|-- Serie
+    AssistivelMixin <|-- Filme
+    AssistivelMixin <|-- Episodio
 
     %% Relações
     Serie "1" *-- "*" Temporada : Possui
     Temporada "1" *-- "*" Episodio : Possui
-
     Usuario "1" *-- "*" ListaPersonalizada : Possui
-    Usuario "1" --> "*" RegistroHistorico : Mantém
-    ListaPersonalizada "*" --> "*" Midia : Contém
+    Usuario "1" *-- "*" RegistroHistorico : Mantém
+    ListaPersonalizada "*" --> "*" Midia : Contém (IDs)
     RegistroHistorico "*" --> "1" Midia : Registra
+    AssistivelMixin --> Status
 
-    Midia --> Status
-    Episodio --> Status
-
-    CLI --> Comandos : Executa
+    %% Camadas
     Comandos --> Midia : Gerencia
     Comandos --> Usuario : Gerencia
-    Comandos --> Relatorios : Gera
+    Comandos --> Relatorio : Usa
     Comandos --> Configuracoes : Consulta
+    Comandos --> Repositorios : Persiste
 ```
 
 </details>
@@ -301,9 +311,46 @@ src/
   cli.py, menu.py  interfaces (entrada e saída de tela)
   domain/          classes e regras de negócio: midia, user, listas, historico, config
   services/        lógica de aplicação: comandos, relatorio, seed
-repositories/      acesso e persistência dos dados (JSON)
+repositories/      acesso e persistência dos dados (JSON); dados.py reúne os repositórios
 data/              arquivos JSON gerados pelos repositórios
 tests/             testes automatizados
+```
+
+## Como executar
+
+Requisitos: Python 3.10 ou superior. O sistema em si não precisa de bibliotecas externas.
+
+```text
+python main.py                            abre a escolha entre menu guiado e CLI com comandos
+python main.py <grupo> <ação> [opções]    executa um subcomando direto
+```
+
+Os dados são gravados em `data/` e as configurações em `settings.json`.
+
+## Como rodar os testes
+
+```text
+pip install -r requirements.txt
+python -m pytest
+```
+
+## Exemplos de uso
+
+```text
+python main.py usuario entrar Davi
+python main.py midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136
+python main.py midia adicionar --tipo serie --titulo Dark --genero "Suspense" --ano 2017 --classificacao 16
+python main.py serie adicionar-temporada 2 --episodios 10 --duracao 50
+python main.py serie adicionar-episodio 2 -t 2 -n 1 --titulo "Piloto" --duracao 45
+python main.py midia atualizar-status 1 assistido
+python main.py midia avaliar 1 9.5
+python main.py midia listar --status assistido
+python main.py usuario criar-lista "Para assistir"
+python main.py usuario adicionar-favorito 1
+python main.py midia relatorio top
+python main.py midia relatorio notas --por genero
+python main.py midia relatorio tempo
+python main.py midia relatorio periodo --por semana
 ```
 
 ## Como pedir ajuda na CLI
@@ -321,6 +368,9 @@ No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `aju
 - **@property com validação** (`src/domain/midia.py`): título não vazio (`Midia`, `Episodio`), duração > 0 e nota entre 0 e 10 (`AssistivelMixin`).
 - **Métodos especiais**: `__str__`, `__repr__`, `__eq__`, `__hash__`, `__lt__` em `Midia`; `__len__` em `Serie`, `Temporada` e `ListaPersonalizada`; também `__iter__` e `__contains__`.
 - **Mixin e herança dupla**: `AssistivelMixin` (duração, status e nota) é combinado a `Midia` em `Filme(AssistivelMixin, Midia)` e reaproveitado por `Episodio`.
+- **Cálculos**: nota média por gênero e tipo, nota geral do catálogo e tempo assistido em `src/services/relatorio.py`; horas com arredondamento configurável (`casas_decimais` em `settings.json`).
+- **Persistência**: `repositories/dados.py` reúne os repositórios JSON (mídias, episódios, usuários, listas, histórico e configurações); a rotina de seed fica em `src/services/seed.py`.
+- **Testes**: `pytest` com mais de 15 casos, cobrindo validações, métodos especiais, séries e episódios, nota média, tempo assistido, duplicidade, listas, histórico e relatórios.
 - **Camadas**: `domain` não conhece persistência nem tela; `repositories` só leem e gravam; `services` orquestram regras e repositórios.
 
 ### Decisões de Design
@@ -343,4 +393,10 @@ No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `aju
 - A CLI utiliza subcomandos para executar as operações. O menu guiado oferece uma alternativa para quem prefere navegar pelas opções sem precisar conhecer todos os comandos.
 
 - Os dados são persistidos em arquivos JSON por meio dos repositórios, separando o armazenamento das regras de negócio.
+
+- O tempo assistido soma apenas mídias com status ASSISTIDO, como pede a regra de negócio. Uma série só entra no total quando todos os episódios estão concluídos.
+
+- O módulo dados.py da especificação é representado por repositories/dados.py, que reúne os repositórios em um único ponto de acesso, evitando duplicar código.
+
+- O arredondamento das horas é configurável pela chave casas_decimais do settings.json.
 ```

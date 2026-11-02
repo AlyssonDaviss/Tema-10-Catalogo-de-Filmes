@@ -39,6 +39,12 @@ def test_filme_rejeita_valores_invalidos(campo, valor):
 
 
 # -- métodos especiais --------------------------------------------------------
+def test_metodos_especiais():
+    a, b = filme(nota=9), filme(titulo="Outro", nota=5)
+    assert a == filme(ano=2000) and a != b          # __eq__: título + tipo
+    assert b < a and sorted([a, b]) == [b, a]       # __lt__: nota média
+    assert "Matrix" in str(a) and "Matrix" in repr(a)
+    assert len(serie(episodios=4)) == 4             # __len__: total de episódios
 
 
 

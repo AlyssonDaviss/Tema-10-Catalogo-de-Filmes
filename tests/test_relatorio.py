@@ -25,13 +25,15 @@ def test_media_por_genero_considera_apenas_finalizadas():
 
 
 
-def test_tempo_total_soma_apenas_o_que_foi_assistido():
+def test_tempo_total_soma_apenas_midias_assistidas():
     serie = Serie("S", "Drama", 2000, "L")
     serie.criar_temporada(1, 4, 30)
     serie.definir_status("ASSISTIDO", 1, 1)
     serie.definir_status("ASSISTIDO", 1, 2)
     midias = [filme("A", "Drama", 100), filme("B", "Drama", 50, status="NÃO ASSISTIDO"), serie]
-    assert relatorio.minutos_por_tipo(midias) == {"FILME": 100, "SERIE": 60}
+    assert relatorio.minutos_por_tipo(midias) == {"FILME": 100, "SERIE": 0}  # série incompleta não conta
+    serie.definir_status("ASSISTIDO")
+    assert relatorio.minutos_por_tipo(midias) == {"FILME": 100, "SERIE": 120}
 
 
 def test_top_ordena_por_nota_limita_e_desempata_pelo_titulo():
