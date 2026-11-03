@@ -60,3 +60,12 @@ def test_listas_pelo_menu(pasta, monkeypatch):
     assert CadastrarUsuario(pasta).carregar_usuario("0001").lista("Maratona") is not None
 
 
+def test_episodio_avulso_pede_data_de_lancamento(pasta, monkeypatch):
+    cmd = Comandos(pasta)
+    cmd.entrar("ana", "123")
+    cmd.adicionar_midia("serie", "Dark", "Ficção", 2017, "16")
+    # ID da série, temporada, nº, título, duração, data inválida e depois válida
+    digitar(monkeypatch, "1", "1", "1", "Segredos", "50", "31/12/2017", "2017-12-01")
+    Menu(cmd).adicionar_episodio()
+    episodio = CadastrarMidia(pasta).obter(1).episodios[0]
+    assert str(episodio.data_lancamento) == "2017-12-01"

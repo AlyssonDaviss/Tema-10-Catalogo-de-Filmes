@@ -23,6 +23,15 @@ def test_media_por_genero_considera_apenas_finalizadas():
     assert relatorio.media_por(midias, "genero") == {"Ação": 7, "Drama": 9}
 
 
+def test_nota_geral_considera_apenas_finalizadas():
+    midias = [
+        filme("A", "Drama", 100, nota=10),
+        filme("B", "Ação", 100, nota=8),
+        filme("C", "Drama", 100, status="ASSISTINDO", nota=1),  # ignorada
+        filme("D", "Ação", 100),                                # sem nota
+    ]
+    assert relatorio.nota_geral(midias) == 9
+    assert relatorio.nota_geral([filme("C", "Drama", 100, status="ASSISTINDO", nota=1)]) is None
 
 
 def test_tempo_total_soma_apenas_midias_assistidas():

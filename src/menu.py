@@ -1,5 +1,7 @@
 """Menu interativo: perguntas passo a passo sobre a mesma lógica dos subcomandos."""
 
+from datetime import date
+
 from src.services.comandos import Comandos, ler_senha, linha, mostrar, mostrar_mensagem
 from src.domain.midia import Serie, Status
 
@@ -33,7 +35,15 @@ def _confirmar(mensagem):
 
 
 def _data_opcional():
-    return None
+    """Pergunta a data de lançamento (AAAA-MM-DD); Enter pula e devolve None."""
+    while True:
+        texto = input("Data de lançamento (AAAA-MM-DD, Enter para pular): ").strip()
+        if not texto:
+            return None
+        try:
+            return date.fromisoformat(texto)
+        except ValueError:
+            print("Data inválida. Use o formato AAAA-MM-DD.")
 
 
 def _escolher(titulo, opcoes, saida="Voltar"):

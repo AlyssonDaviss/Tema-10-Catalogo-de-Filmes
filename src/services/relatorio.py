@@ -12,8 +12,8 @@ def finalizadas(midias):
 
 
 def nota_geral(midias):
-    """Média das notas médias de todas as mídias que têm alguma nota."""
-    return media(m.nota_media for m in midias if m.nota_media is not None)
+    """Média das notas médias das mídias finalizadas que têm alguma nota."""
+    return media(m.nota_media for m in finalizadas(midias) if m.nota_media is not None)
 
 
 def media_por(midias, atributo="genero"):
