@@ -363,16 +363,6 @@ python main.py ajuda midia adicionar    detalhes de um comando
 
 No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `ajuda`, `ajuda midia` etc., sem o prefixo `python main.py`. O guia é gerado a partir dos próprios subcomandos, então não existe uma lista de comandos escrita à mão para manter.
 
-## Requisitos técnicos atendidos
-
-- **@property com validação** (`src/domain/midia.py`): título não vazio (`Midia`, `Episodio`), duração > 0 e nota entre 0 e 10 (`AssistivelMixin`).
-- **Métodos especiais**: `__str__`, `__repr__`, `__eq__`, `__hash__`, `__lt__` em `Midia`; `__len__` em `Serie`, `Temporada` e `ListaPersonalizada`; também `__iter__` e `__contains__`.
-- **Mixin e herança dupla**: `AssistivelMixin` (duração, status e nota) é combinado a `Midia` em `Filme(AssistivelMixin, Midia)` e reaproveitado por `Episodio`.
-- **Cálculos**: nota média por gênero e tipo, nota geral do catálogo e tempo assistido em `src/services/relatorio.py`; horas com arredondamento configurável (`casas_decimais` em `settings.json`).
-- **Persistência**: `repositories/dados.py` reúne os repositórios JSON (mídias, episódios, usuários, listas, histórico e configurações); a rotina de seed fica em `src/services/seed.py`.
-- **Testes**: `pytest` com mais de 15 casos, cobrindo validações, métodos especiais, séries e episódios, nota média, tempo assistido, duplicidade, listas, histórico e relatórios.
-- **Camadas**: `domain` não conhece persistência nem tela; `repositories` só leem e gravam; `services` orquestram regras e repositórios.
-
 ### Decisões de Design
 
 ```text
@@ -395,6 +385,10 @@ No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `aju
 - Os dados são persistidos em arquivos JSON por meio dos repositórios, separando o armazenamento das regras de negócio.
 
 - O tempo assistido soma apenas mídias com status ASSISTIDO, como pede a regra de negócio. Uma série só entra no total quando todos os episódios estão concluídos.
+
+- Os relatórios de notas (geral, por gênero e tipo, e top) consideram apenas mídias finalizadas (ASSISTIDO). O relatório de séries mais assistidas é a exceção, pois conta episódios assistidos.
+
+- No menu guiado, as temporadas e os episódios avulsos ficam em Mídias > Séries: temporadas e episódios. A data de lançamento é opcional (AAAA-MM-DD, Enter para pular), como o --lancamento da CLI.
 
 - O módulo dados.py da especificação é representado por repositories/dados.py, que reúne os repositórios em um único ponto de acesso, evitando duplicar código.
 
