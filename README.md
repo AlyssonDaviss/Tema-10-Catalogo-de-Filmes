@@ -44,7 +44,7 @@ Métodos:
 
 **Interfaces: CLI (src/cli.py) e Menu (src/menu.py)**
 
-Ambas apenas leem a entrada e chamam a classe Comandos.
+As duas só leem a entrada e chamam a classe Comandos.
 
 **Classe: Midia (abstrata)**
 
@@ -148,7 +148,7 @@ Métodos:
 + Series_mais_assistidas()
 + Minutos_por_periodo() (semana ou mês)
 
-**Persistência: repositories (JSON), reunidos em repositories/dados.py**
+**Persistência: repositories (JSON), com o dados.py juntando todos**
 
 + CadastrarMidia, CadastrarUsuario (listas e histórico), CadastrarConfiguracoes, CadastrarSessao
 
@@ -311,21 +311,21 @@ src/
   cli.py, menu.py  interfaces (entrada e saída de tela)
   domain/          classes e regras de negócio: midia, user, listas, historico, config
   services/        lógica de aplicação: comandos, relatorio, seed
-repositories/      acesso e persistência dos dados (JSON); dados.py reúne os repositórios
+repositories/      persistência dos dados em JSON (o dados.py junta os repositórios)
 data/              arquivos JSON gerados pelos repositórios
 tests/             testes automatizados
 ```
 
 ## Como executar
 
-Requisitos: Python 3.10 ou superior. O sistema em si não precisa de bibliotecas externas.
+Precisa de Python 3.10 ou mais novo. O sistema não usa bibliotecas externas, o `pytest` só é necessário para rodar os testes.
 
 ```text
 python main.py                            abre a escolha entre menu guiado e CLI com comandos
 python main.py <grupo> <ação> [opções]    executa um subcomando direto
 ```
 
-Os dados são gravados em `data/` e as configurações em `settings.json`.
+Os dados ficam na pasta `data/` e as configurações no `settings.json`.
 
 ## Como rodar os testes
 
@@ -336,22 +336,73 @@ python -m pytest
 
 ## Exemplos de uso
 
+Sequência para testar o sistema com o catálogo vazio (a primeira mídia cadastrada fica com ID 1). No terminal de comandos (opção 2 do `python main.py`) dá para digitar sem o `python main.py` na frente.
+
 ```text
-python main.py usuario entrar Davi
-python main.py midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136
+# 1. Ajuda e login
+python main.py ajuda
+python main.py ajuda midia adicionar
+python main.py usuario entrar Professor --senha 123
+python main.py usuario quem
+
+# 2. Cadastro de mídias
+python main.py midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --elenco "Keanu Reeves, Carrie-Anne Moss" --duracao 136
 python main.py midia adicionar --tipo serie --titulo Dark --genero "Suspense" --ano 2017 --classificacao 16
-python main.py serie adicionar-temporada 2 --episodios 10 --duracao 50
-python main.py serie adicionar-episodio 2 -t 2 -n 1 --titulo "Piloto" --duracao 45
+python main.py midia listar
+
+# 3. Temporadas e episódios da série (ID 2)
+python main.py serie adicionar-temporada 2 --episodios 3 --duracao 50
+python main.py serie adicionar-episodio 2 -t 2 -n 1 --titulo "Piloto" --duracao 40
+python main.py serie episodios 2
+
+# 4. Status e histórico (precisa estar logado)
 python main.py midia atualizar-status 1 assistido
+python main.py serie atualizar-status 2 assistido -t 1 -e 1
+python main.py serie atualizar-status 2 assistido -t 1
+python main.py midia listar --tipo serie
+python main.py serie atualizar-status 2 assistido
+python main.py usuario historico
+
+# 5. Avaliações (nota de 0 a 10)
 python main.py midia avaliar 1 9.5
+python main.py midia avaliar 2 8 -t 1 -e 1
+python main.py midia avaliar 2 7
 python main.py midia listar --status assistido
+
+# 6. Listas e favoritos
 python main.py usuario criar-lista "Para assistir"
+python main.py usuario adicionar-na-lista "Para assistir" 2
 python main.py usuario adicionar-favorito 1
-python main.py midia relatorio top
+python main.py usuario listas
+python main.py usuario listas Favoritos
+python main.py usuario remover-da-lista "Para assistir" 2
+
+# 7. Relatórios
+python main.py midia relatorio geral
 python main.py midia relatorio notas --por genero
 python main.py midia relatorio tempo
+python main.py midia relatorio top
+python main.py midia relatorio series
 python main.py midia relatorio periodo --por semana
+
+# 8. Configurações e recomendação
+python main.py config mostrar
+python main.py config definir nota_minima_recomendado 8
+python main.py config definir casas_decimais 1
+python main.py midia recomendar
 ```
+
+Comandos que devem dar erro (regras de validação):
+
+```text
+python main.py midia adicionar --tipo filme --titulo Matrix --genero "Ficção" --ano 1999 --classificacao 14 --duracao 136    # duplicado
+python main.py midia avaliar 1 11                  # nota fora de 0 a 10
+python main.py midia atualizar-status 1 talvez     # status inválido
+python main.py usuario sair
+python main.py usuario criar-lista "X"             # sem login
+```
+
+Se quiser ver o sistema funcionando sem cadastrar nada, `python main.py exemplos` cadastra dois filmes e uma série (IDs 1, 2 e 3). Para recomeçar do zero, é só apagar os `.json` da pasta `data/`.
 
 ## Como pedir ajuda na CLI
 
@@ -361,17 +412,7 @@ python main.py ajuda midia              comandos do grupo com seus argumentos
 python main.py ajuda midia adicionar    detalhes de um comando
 ```
 
-No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `ajuda`, `ajuda midia` etc., sem o prefixo `python main.py`. O guia é gerado a partir dos próprios subcomandos, então não existe uma lista de comandos escrita à mão para manter.
-
-## Requisitos técnicos atendidos
-
-- **@property com validação** (`src/domain/midia.py`): título não vazio (`Midia`, `Episodio`), duração > 0 e nota entre 0 e 10 (`AssistivelMixin`).
-- **Métodos especiais**: `__str__`, `__repr__`, `__eq__`, `__hash__`, `__lt__` em `Midia`; `__len__` em `Serie`, `Temporada` e `ListaPersonalizada`; também `__iter__` e `__contains__`.
-- **Mixin e herança dupla**: `AssistivelMixin` (duração, status e nota) é combinado a `Midia` em `Filme(AssistivelMixin, Midia)` e reaproveitado por `Episodio`.
-- **Cálculos**: nota média por gênero e tipo, nota geral do catálogo e tempo assistido em `src/services/relatorio.py`; horas com arredondamento configurável (`casas_decimais` em `settings.json`).
-- **Persistência**: `repositories/dados.py` reúne os repositórios JSON (mídias, episódios, usuários, listas, histórico e configurações); a rotina de seed fica em `src/services/seed.py`.
-- **Testes**: `pytest` com mais de 15 casos, cobrindo validações, métodos especiais, séries e episódios, nota média, tempo assistido, duplicidade, listas, histórico e relatórios.
-- **Camadas**: `domain` não conhece persistência nem tela; `repositories` só leem e gravam; `services` orquestram regras e repositórios.
+No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `ajuda`, `ajuda midia` etc., sem o `python main.py`. O guia é montado a partir dos próprios subcomandos, então não tem lista de comandos escrita à mão para manter.
 
 ### Decisões de Design
 
@@ -394,9 +435,9 @@ No terminal de comandos (opção 2 ao abrir `python main.py`) basta digitar `aju
 
 - Os dados são persistidos em arquivos JSON por meio dos repositórios, separando o armazenamento das regras de negócio.
 
-- O tempo assistido soma apenas mídias com status ASSISTIDO, como pede a regra de negócio. Uma série só entra no total quando todos os episódios estão concluídos.
+- O tempo assistido soma só as mídias com status ASSISTIDO, como diz a regra de negócio. Uma série só entra na soma quando todos os episódios foram assistidos.
 
-- O módulo dados.py da especificação é representado por repositories/dados.py, que reúne os repositórios em um único ponto de acesso, evitando duplicar código.
+- O dados.py da especificação ficou em repositories/dados.py, que junta os repositórios num lugar só, sem repetir código.
 
-- O arredondamento das horas é configurável pela chave casas_decimais do settings.json.
+- O arredondamento das horas é configurado pela chave casas_decimais do settings.json.
 ```
